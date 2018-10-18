@@ -1,5 +1,6 @@
 import os
 import json
+import datetime
 from typing import Iterator, Dict, Any
 
 def is_valid_dir(dir_to_check: str) -> bool:
@@ -24,6 +25,28 @@ def get_person(person_dir: str) -> Dict[str, Any]:
     Gets the dictionary representation of a person from
     a str denoting the directory corresponding to the person
     """
+    pass
+
+def should_email_today(day: datetime.datetime) -> bool:
+    """
+    Returns True if we should email ourselves today w/ reminders
+    False otherwise
+    """
+    pass
+
+def filter_people_for_day(
+        people: Iterator[Dict[str, Any]],
+        day: datetime.datetime) -> Iterator[Dict[str, Any]]:
+    """
+    Returns True if we should email ourselves today w/ reminders
+    False otherwise
+    """
+    pass
+
+def email_self(people: Iterator[Dict[str, Any]], settings: Dict[str, Any]) -> None:
+    pass
+
+def get_settings() -> Dict[str, Any]:
     pass
 
 if __name__ == "__main__":
