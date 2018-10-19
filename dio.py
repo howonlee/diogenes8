@@ -1,42 +1,39 @@
 import os
 import json
 import datetime
+import dataclasses
 from typing import Iterator, Dict, Any
 
+@dataclasses.dataclass
 class Person:
-    def __init__(self):
-###############
-###############
-###############
-###############
-        pass
+    email: str
+    name: str
 
-    def from_file(file_obj):
-###############
-###############
-###############
-###############
+    def __hash__(self):
         pass
+        ################
+        ################
+        ################
+        ################
 
+@dataclasses.dataclass
 class Email:
-    def __init__(self):
-###############
-###############
-###############
-        pass
+    dest_addr: str=""
+    subject: str=""
+    text: str=""
 
+    def to_mailgun_data(self, settings: Settings):
+        return {
+            "from": "Diogenes <mailgun@{}>".format(settings.mailgun_domain),
+            "to": self.dest_addr,
+            "subject": self.subject,
+            "text": self.text,
+        }
+
+@dataclasses.dataclass
 class Settings:
-    def __init__(self):
-###############
-###############
-###############
-        pass
-
-    def from_file(file_obj):
-###############
-###############
-###############
-        pass
+    mailgun_domain: str
+    mailgun_api_key: str
 
 def is_valid_dir(dir_to_check: str) -> bool:
     parent_dir, filename = os.path.split(dir_to_check)
@@ -97,11 +94,12 @@ def make_emails(people: Iterator[Person]) -> Iterator[Email]:
     pass
 
 def send_emails(settings: Settings, emails: Iterator[Email]) -> None:
-###########
-###########
-###########
-###########
-    pass
+    url = "some shit".format(settings.mailgun_domain)
+    auth = ("api", settings.mailgun_api_key)
+    for email in emails:
+        data = email.to_mailgun_data(settings)
+        response = requests.post(url, auth=auth, data=data)
+        response.raise_for_status()
 
 def get_settings() -> Settings:
     dio_settings_path = os.path.join(get_curr_dir(), ".dio")
