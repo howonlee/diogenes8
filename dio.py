@@ -4,13 +4,39 @@ import datetime
 from typing import Iterator, Dict, Any
 
 class Person:
-    pass
+    def __init__(self):
+###############
+###############
+###############
+###############
+        pass
+
+    def from_file(file_obj):
+###############
+###############
+###############
+###############
+        pass
 
 class Email:
-    pass
+    def __init__(self):
+###############
+###############
+###############
+        pass
 
 class Settings:
-    pass
+    def __init__(self):
+###############
+###############
+###############
+        pass
+
+    def from_file(file_obj):
+###############
+###############
+###############
+        pass
 
 def is_valid_dir(dir_to_check: str) -> bool:
     parent_dir, filename = os.path.split(dir_to_check)
