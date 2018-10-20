@@ -2,7 +2,7 @@ import os
 import json
 import datetime
 import dataclasses
-from typing import Iterator, Dict, Any
+from typing import Iterator, Dict, Any, IO
 
 @dataclasses.dataclass
 class Person:
@@ -15,6 +15,13 @@ class Person:
         ################
         ################
         ################
+
+    @staticmethod
+    def from_file(person_file: IO[str]) -> Person:
+##########
+##########
+##########
+        pass
 
 @dataclasses.dataclass
 class Email:
@@ -34,6 +41,13 @@ class Email:
 class Settings:
     mailgun_domain: str
     mailgun_api_key: str
+
+    @staticmethod
+    def from_file(settings_file: IO[str]) -> Person:
+##########
+##########
+##########
+        pass
 
 def is_valid_dir(dir_to_check: str) -> bool:
     parent_dir, filename = os.path.split(dir_to_check)
