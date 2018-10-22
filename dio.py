@@ -99,13 +99,14 @@ def filter_people_for_day(
 ###########
     pass
 
-def make_emails(people: Iterator[Person]) -> Iterator[Email]:
-###########
-###########
-###########
-###########
-###########
-    pass
+def make_email(person: Person) -> Email:
+    subject: str = """
+    """
+    text: str = """
+    """
+    return Email(dest_addr=Person.email,
+                 subject=subject,
+                 text=text)
 
 def send_emails(settings: Settings, emails: Iterator[Email]) -> None:
     url = "some shit".format(settings.mailgun_domain)
