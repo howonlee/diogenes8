@@ -18,6 +18,9 @@ class Person(object):
                     self.name,
                     self.salt))
 
+    def to_file(person_file: IO[str]) -> None:
+        json.dump(dataclasses.asdict(self), person_file)
+
     @staticmethod
     def from_file(person_file: IO[str]) -> Person:
         json_res: Dict[str, Any] = json.load(person_file)
@@ -41,6 +44,9 @@ class Email(object):
 class Settings(object):
     mailgun_domain: str
     mailgun_api_key: str
+
+    def to_file(settings_file: IO[str]) -> None:
+        json.dump(dataclasses.asdict(self), settings_file)
 
     @staticmethod
     def from_file(settings_file: IO[str]) -> Settings:
