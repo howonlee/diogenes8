@@ -1,3 +1,4 @@
+from __future__ import annotations
 import os
 import json
 import datetime
@@ -5,9 +6,10 @@ import dataclasses
 from typing import Iterator, Dict, Any, IO
 
 @dataclasses.dataclass
-class Person:
+class Person(object):
     email: str
     name: str
+    salt: str ### have a default for this...
 
     def __hash__(self):
         pass
@@ -18,13 +20,11 @@ class Person:
 
     @staticmethod
     def from_file(person_file: IO[str]) -> Person:
-##########
-##########
-##########
-        pass
+        json_res: Dict[str, Any] = json.load(person_file)
+        return self.__init__(**json_res)
 
 @dataclasses.dataclass
-class Email:
+class Email(object):
     dest_addr: str=""
     subject: str=""
     text: str=""
@@ -38,16 +38,14 @@ class Email:
         }
 
 @dataclasses.dataclass
-class Settings:
+class Settings(object):
     mailgun_domain: str
     mailgun_api_key: str
 
     @staticmethod
-    def from_file(settings_file: IO[str]) -> Person:
-##########
-##########
-##########
-        pass
+    def from_file(settings_file: IO[str]) -> Settings:
+        json_res: Dict[str, Any] = json.load(settings_file)
+        return self.__init__(**json_res)
 
 def is_valid_dir(dir_to_check: str) -> bool:
     parent_dir, filename = os.path.split(dir_to_check)
