@@ -94,15 +94,9 @@ def should_contact(person: Person, day: datetime.datetime) -> bool:
     return person_hash % num_days_in_month == day.day
 
 def make_email(person: Person) -> Email:
-##################
-##################
-##################
-##################
-    subject: str = """
-    """
-    text: str = """
-    """
-    return Email(dest_addr=Person.email,
+    subject: str = f"[Diogenes] Contact {person.name}"
+    text: str = f"It's time to contact {person.name}. Email is {person.email}"
+    return Email(dest_addr=person.email,
                  subject=subject,
                  text=text)
 
