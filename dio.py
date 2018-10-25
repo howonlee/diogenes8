@@ -2,6 +2,7 @@ from __future__ import annotations
 import calendar
 import os
 import json
+import random
 import datetime
 import dataclasses
 from typing import Iterator, Dict, Any, IO
@@ -10,7 +11,7 @@ from typing import Iterator, Dict, Any, IO
 class Person(object):
     email: str
     name: str
-    salt: str ### have a default for this...
+    salt: str = str(random.randint(1e30, 9e30))
 
     def __hash__(self) -> long:
         return hash("{}_{}_{}".format(
@@ -28,9 +29,9 @@ class Person(object):
 
 @dataclasses.dataclass
 class Email(object):
-    dest_addr: str=""
-    subject: str=""
-    text: str=""
+    dest_addr: str
+    subject: str
+    text: str
 
     def to_mailgun_data(self, settings: Settings):
         return {
@@ -123,5 +124,14 @@ def get_settings() -> Settings:
         res = Settings.from_file(dio_settings_file)
     return res
 
+def main() -> None:
+############
+############
+############
+############
+############
+    pass
+
 if __name__ == "__main__":
+    main()
     print(list(get_people()))
