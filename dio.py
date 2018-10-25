@@ -1,4 +1,5 @@
 from __future__ import annotations
+import calendar
 import os
 import json
 import datetime
@@ -11,12 +12,11 @@ class Person(object):
     name: str
     salt: str ### have a default for this...
 
-    def __hash__(self):
-        pass
-        ################
-        ################
-        ################
-        ################
+    def __hash__(self) -> long:
+        return hash("{}_{}_{}".format(
+                    self.email,
+                    self.name,
+                    self.salt))
 
     @staticmethod
     def from_file(person_file: IO[str]) -> Person:
@@ -88,16 +88,16 @@ def should_email_today(dt: datetime.datetime) -> bool:
         return True
     return False
 
-def filter_people_for_day(
-        people: Iterator[Person],
-        day: datetime.datetime) -> Iterator[Person]:
-###########
-###########
-###########
-###########
-    pass
+def should_contact(person: Person, day: datetime.datetime) -> bool:
+    person_hash = hash(Person)
+    _, num_days_in_month = calendar.monthrange(day.year, day.month)
+    return person_hash % num_days_in_month == day.day
 
 def make_email(person: Person) -> Email:
+##################
+##################
+##################
+##################
     subject: str = """
     """
     text: str = """
@@ -106,13 +106,16 @@ def make_email(person: Person) -> Email:
                  subject=subject,
                  text=text)
 
-def send_emails(settings: Settings, emails: Iterator[Email]) -> None:
+def send_email(settings: Settings, email: Email) -> None:
+##################
+##################
+##################
+##################
     url = "some shit".format(settings.mailgun_domain)
     auth = ("api", settings.mailgun_api_key)
-    for email in emails:
-        data = email.to_mailgun_data(settings)
-        response = requests.post(url, auth=auth, data=data)
-        response.raise_for_status()
+    data = email.to_mailgun_data(settings)
+    response = requests.post(url, auth=auth, data=data)
+    response.raise_for_status()
 
 def get_settings() -> Settings:
     dio_settings_path = os.path.join(get_curr_dir(), ".dio")
