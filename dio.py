@@ -85,9 +85,9 @@ def get_person(person_dir: str) -> Person:
         res = Person.from_file(peep_settings_file)
     return res
 
-def should_email_today(dt: datetime.datetime) -> bool:
+def should_email_day(dt: datetime.datetime) -> bool:
     """
-    Returns True if we should email ourselves today w/ reminders
+    Returns True if we should email ourselves on day w/ reminders
     False otherwise
     """
     month = dt.month
@@ -108,11 +108,8 @@ def make_email(person: Person) -> Email:
                  text=text)
 
 def send_email(settings: Settings, email: Email) -> None:
-##################
-##################
-##################
-##################
-    url = "some shit".format(settings.mailgun_domain)
+    url = "https://api.mailgun.net/v3/{}/messages"\
+            .format(settings.mailgun_domain)
     auth = ("api", settings.mailgun_api_key)
     data = email.to_mailgun_data(settings)
     response = requests.post(url, auth=auth, data=data)
@@ -125,12 +122,14 @@ def get_settings() -> Settings:
     return res
 
 def main() -> None:
-############
-############
-############
-############
-############
-    pass
+    if should_email_day(datetime.datetime.today()):
+        curr_settings = get_settings()
+        for person in get_people():
+            if should_contact(person, datetime.datetime.today()):
+                curr_email = make_email(person)
+                send_email(curr_settings, curr_email)
+    else:
+        pass
 
 if __name__ == "__main__":
     main()
