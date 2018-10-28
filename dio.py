@@ -90,15 +90,18 @@ def should_email_day(dt: datetime.datetime) -> bool:
     Returns True if we should email ourselves on day w/ reminders
     False otherwise
     """
-    month = dt.month
-    if month % 3 == 0:
+    month, weekday = dt.month, dt.weekday
+    if month % 3 == 0 and weekday == 7: # sunday
         return True
     return False
 
 def should_contact(person: Person, day: datetime.datetime) -> bool:
+    """
+    per week, to be honest
+    """
     person_hash = hash(Person)
     _, num_days_in_month = calendar.monthrange(day.year, day.month)
-    return person_hash % num_days_in_month == day.day
+    return person_hash % num_sundays_in_month == day.day
 
 def make_email(person: Person) -> Email:
     subject: str = f"[Diogenes] Contact {person.name}"
