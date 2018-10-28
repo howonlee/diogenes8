@@ -41,6 +41,23 @@ class Email(object):
             "text": self.text,
         }
 
+    def send(self, settings: Settings) -> None:
+        url = "https://api.mailgun.net/v3/{}/messages"\
+                .format(settings.mailgun_domain)
+        auth = ("api", settings.mailgun_api_key)
+        data = self.to_mailgun_data(settings)
+        response = requests.post(url, auth=auth, data=data)
+        response.raise_for_status()
+
+    @staticmethod
+    def from_person(person: Person) -> Email:
+        subject: str = f"[Diogenes] Contact {person.name}"
+        text: str = f"It's time to contact {person.name}. Email is {person.email}"
+        return Email(dest_addr=person.email,
+                     subject=subject,
+                     text=text)
+
+
 @dataclasses.dataclass
 class Settings(object):
     mailgun_domain: str
@@ -53,6 +70,14 @@ class Settings(object):
     def from_file(settings_file: IO[str]) -> Settings:
         json_res: Dict[str, Any] = json.load(settings_file)
         return self.__init__(**json_res)
+
+    @staticmethod
+    def get_settings() -> Settings:
+        dio_settings_path = os.path.join(get_curr_dir(), ".dio")
+        with open(dio_settings_path, "r") as dio_settings_file:
+            res = Settings.from_file(dio_settings_file)
+        return res
+
 
 def is_valid_dir(dir_to_check: str) -> bool:
     parent_dir, filename = os.path.split(dir_to_check)
@@ -103,34 +128,13 @@ def should_contact(person: Person, day: datetime.datetime) -> bool:
     _, num_days_in_month = calendar.monthrange(day.year, day.month)
     return person_hash % num_sundays_in_month == day.day
 
-def make_email(person: Person) -> Email:
-    subject: str = f"[Diogenes] Contact {person.name}"
-    text: str = f"It's time to contact {person.name}. Email is {person.email}"
-    return Email(dest_addr=person.email,
-                 subject=subject,
-                 text=text)
-
-def send_email(settings: Settings, email: Email) -> None:
-    url = "https://api.mailgun.net/v3/{}/messages"\
-            .format(settings.mailgun_domain)
-    auth = ("api", settings.mailgun_api_key)
-    data = email.to_mailgun_data(settings)
-    response = requests.post(url, auth=auth, data=data)
-    response.raise_for_status()
-
-def get_settings() -> Settings:
-    dio_settings_path = os.path.join(get_curr_dir(), ".dio")
-    with open(dio_settings_path, "r") as dio_settings_file:
-        res = Settings.from_file(dio_settings_file)
-    return res
-
 def main() -> None:
     if should_email_day(datetime.datetime.today()):
-        curr_settings = get_settings()
+        curr_settings = Settings.get_settings()
         for person in get_people():
             if should_contact(person, datetime.datetime.today()):
-                curr_email = make_email(person)
-                send_email(curr_settings, curr_email)
+                curr_email = Email.from_person(person)
+                curr_email.send(curr_settings)
     else:
         pass
 
