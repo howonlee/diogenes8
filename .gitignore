@@ -1,2 +1,3 @@
-# preface peeps' folders with p_ so I can upload to github i guess
-p_*
+# preface peeps' folders with peep_ so I can upload to github i guess
+peep_*
+__pycache__
