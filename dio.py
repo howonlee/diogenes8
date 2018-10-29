@@ -10,6 +10,12 @@ import dataclasses
 from abc import ABC
 from typing import Iterator, Dict, Any, IO
 
+class DioDir(object):
+    """
+    eventually, un-hard code dio dir from home
+    """
+    pass
+
 @dataclasses.dataclass
 class Person(object):
     email: str
@@ -47,6 +53,7 @@ class Person(object):
 
     @staticmethod
     def get_all() -> Iterator[Person]:
+        create_dio_dir_if_not_exists()
         dio_dir = os.path.expanduser("~/.diogenes")
         dirs = os.listdir(dio_dir)
         peep_dirs = filter(is_peep_dir, dirs)
@@ -105,11 +112,17 @@ class Settings(object):
         return self.__init__(**json_res)
 
     @staticmethod
+    def create_settings_if_not_exists(dio_dir: str) -> None:
+        default_settings = Settings(mailgun_domain="",
+                                    mailgun_api_key="")
+        with open(os.path.join(dio_dir, ".dio.json"), "w") as settings_file:
+            default_settings.to_file(settings_file)
+
+    @staticmethod
     def get_settings() -> Settings:
-###################
-################### contingency for settings not existing yet
-###################
+        create_dio_dir_if_not_exists()
         dio_dir = os.path.expanduser("~/.diogenes")
+        create_settings_if_not_exists(dio_dir)
         dio_settings_path = os.path.join(dio_dir, ".dio.json")
         with open(dio_settings_path, "r") as dio_settings_file:
             res = Settings.from_file(dio_settings_file)
@@ -178,14 +191,14 @@ def add_person(name: str, email: str) -> None:
     with open(peep_json_filename, "w") as peep_json_file:
         new_peep.to_file(peep_json_file)
 
-def create_dio_dir() -> None:
+def create_dio_dir_if_not_exists() -> None:
     """ Not threadsafe but otherwise idempotent """
     dio_dirname = os.path.expanduser("~/.diogenes")
     if not os.path.exists(dio_dirname):
         os.makedirs(dio_dirname)
 
 if __name__ == "__main__":
-    create_dio_dir()
+    create_dio_dir_if_not_exists()
     argparse.add_argument("subcommand")
     args = argparse.parse_args()
     if args.subcommand == "add":
