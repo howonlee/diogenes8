@@ -45,12 +45,8 @@ class Person(object):
 
     @staticmethod
     def get_all() -> Iterator[Person]:
-################
-################
-################ make it a root .diogenes dir
-################
-        curr_dir = os.path.abspath(os.path.dirname(__file__))
-        dirs = os.listdir(curr_dir)
+        dio_dir = os.path.expanduser("~/.diogenes")
+        dirs = os.listdir(dio_dir)
         peep_dirs = filter(is_peep_dir, dirs)
         return map(Person.from_dir, peep_dirs)
 
@@ -105,11 +101,8 @@ class Settings(object):
 
     @staticmethod
     def get_settings() -> Settings:
-################
-################ make it a root .diogenes dir
-################
-        curr_dir = os.path.abspath(os.path.dirname(__file__))
-        dio_settings_path = os.path.join(curr_dir, ".dio.json")
+        dio_dir = os.path.expanduser("~/.diogenes")
+        dio_settings_path = os.path.join(dio_dir, ".dio.json")
         with open(dio_settings_path, "r") as dio_settings_file:
             res = Settings.from_file(dio_settings_file)
         return res
@@ -171,7 +164,14 @@ def add_person(name: str, email: str) -> None:
 ###############
     pass
 
+def create_dio_dir() -> None:
+    """ Not threadsafe but otherwise idempotent """
+    dio_dirname = os.path.expanduser("~/.diogenes")
+    if not os.path.exists(dio_dirname):
+        os.makedirs(dio_dirname
+
 if __name__ == "__main__":
+    create_dio_dir()
     argparse.add_argument("subcommand")
     args = argparse.parse_args()
     if args.subcommand == "add":
