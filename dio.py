@@ -65,13 +65,17 @@ class Email(object):
             "text": self.text,
         }
 
-    def send(self, settings: Settings) -> None:
+    def send(self, settings: Settings) -> requests.Response:
+        ######################
+        ###################### de-hard-code the url to make testable
+        ######################
         url = "https://api.mailgun.net/v3/{}/messages"\
                 .format(settings.mailgun_domain)
         auth = ("api", settings.mailgun_api_key)
         data = self.to_mailgun_data(settings)
         response = requests.post(url, auth=auth, data=data)
         response.raise_for_status()
+        return response
 
     @staticmethod
     def from_person(person: Person) -> Email:
