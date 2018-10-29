@@ -3,9 +3,11 @@ import calendar
 import os
 import json
 import random
+import math
 import datetime
 import argparse
 import dataclasses
+from abc import ABC
 from typing import Iterator, Dict, Any, IO
 
 @dataclasses.dataclass
@@ -112,7 +114,7 @@ class Settings(object):
         return res
 
 
-class ScheduleABC(object):
+class ScheduleABC(ABC):
     def __init__(self):
         pass
 
@@ -131,23 +133,21 @@ class DefaultSchedule(ScheduleABC):
         pass
 
     def should_email_day(dt: datetime.datetime) -> bool:
-###############
-###############
-###############
-###############
-        month, weekday = dt.month, dt.weekday
-        if month % 3 == 0 and weekday == 7: # sunday
+        # isocalendar has Monday 1 and Sunday 7
+        # we want every 2nd Saturday
+        _, weeknumber, weekday = dt.isocalendar()
+        if weeknumber % 2 == 0 and weekday == 6:
             return True
         return False
 
     def should_contact(person: Person, dt: datetime.datetime) -> bool:
-###############
-###############
-###############
+        # 28 Dec is always in last week of year
+        num_weeks_in_year = datetime.date(dt.year, 12, 28)\
+                .isocalendar()[1]
+        _, weeknumber, weekday = dt.isocalendar()
         person_hash = hash(Person)
-        _, num_days_in_month = calendar.monthrange(day.year, day.month)
-        return person_hash % num_sundays_in_month == day.day
-
+        rounded_weeknumber = int(math.ceil(weeknumber / 2.) * 2)
+        return (person_hash % num_weeks_in_year) == rounded_weeknumber
 
 def check_email() -> None:
     if should_email_day(datetime.datetime.today()):
@@ -160,13 +160,21 @@ def check_email() -> None:
         pass
 
 def add_person(name: str, email: str) -> None:
+##############
+##############
+##############
+##############
+    peep_dirname = NotImplemented() ############
     # mkdir peep_name
     # if exists already, add numbers
-    # make Person object, serialize it to a .peep.json file in it
-###############
-###############
-###############
-    pass
+    if not os.path.exists(dio_dirname):
+        os.makedirs(dio_dirname)
+    else:
+        os.makedirs(dio_dirname + NotImplemented)
+    new_peep = Person(NotImplemented)
+    peep_json_filename = NotImplemented
+    with open(peep_json_filename, "w") as peep_json_file:
+        new_peep.to_file(peep_json_file)
 
 def create_dio_dir() -> None:
     """ Not threadsafe but otherwise idempotent """
