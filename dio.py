@@ -45,6 +45,10 @@ class Person(object):
 
     @staticmethod
     def get_all() -> Iterator[Person]:
+################
+################
+################ make it a root .diogenes dir
+################
         curr_dir = os.path.abspath(os.path.dirname(__file__))
         dirs = os.listdir(curr_dir)
         peep_dirs = filter(is_peep_dir, dirs)
@@ -101,6 +105,9 @@ class Settings(object):
 
     @staticmethod
     def get_settings() -> Settings:
+################
+################ make it a root .diogenes dir
+################
         curr_dir = os.path.abspath(os.path.dirname(__file__))
         dio_settings_path = os.path.join(curr_dir, ".dio.json")
         with open(dio_settings_path, "r") as dio_settings_file:
