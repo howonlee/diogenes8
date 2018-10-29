@@ -122,12 +122,19 @@ class DefaultSchedule(ScheduleABC):
         pass
 
     def should_email_day(dt: datetime.datetime) -> bool:
+###############
+###############
+###############
+###############
         month, weekday = dt.month, dt.weekday
         if month % 3 == 0 and weekday == 7: # sunday
             return True
         return False
 
     def should_contact(person: Person, dt: datetime.datetime) -> bool:
+###############
+###############
+###############
         person_hash = hash(Person)
         _, num_days_in_month = calendar.monthrange(day.year, day.month)
         return person_hash % num_sundays_in_month == day.day
