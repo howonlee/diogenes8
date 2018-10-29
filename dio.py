@@ -7,6 +7,16 @@ import datetime
 import dataclasses
 from typing import Iterator, Dict, Any, IO
 
+def get_curr_dir() -> str:
+    return os.path.abspath(os.path.dirname(__file__))
+
+def is_valid_dir(dir_to_check: str) -> bool:
+    parent_dir, filename = os.path.split(dir_to_check)
+    if filename.startswith("."):
+        return False
+    else:
+        return os.path.isdir(dir_to_check)
+
 @dataclasses.dataclass
 class Person(object):
     email: str
@@ -122,15 +132,6 @@ class DefaultSchedule(ScheduleABC):
         _, num_days_in_month = calendar.monthrange(day.year, day.month)
         return person_hash % num_sundays_in_month == day.day
 
-def is_valid_dir(dir_to_check: str) -> bool:
-    parent_dir, filename = os.path.split(dir_to_check)
-    if filename.startswith("."):
-        return False
-    else:
-        return os.path.isdir(dir_to_check)
-
-def get_curr_dir() -> str:
-    return os.path.abspath(os.path.dirname(__file__))
 
 def main() -> None:
     if should_email_day(datetime.datetime.today()):
