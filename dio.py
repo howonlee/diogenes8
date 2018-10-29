@@ -4,6 +4,7 @@ import os
 import json
 import random
 import datetime
+import argparse
 import dataclasses
 from typing import Iterator, Dict, Any, IO
 
@@ -140,7 +141,7 @@ class DefaultSchedule(ScheduleABC):
         return person_hash % num_sundays_in_month == day.day
 
 
-def main() -> None:
+def check_email() -> None:
     if should_email_day(datetime.datetime.today()):
         curr_settings = Settings.get_settings()
         for person in get_people():
@@ -150,5 +151,19 @@ def main() -> None:
     else:
         pass
 
+def add_person(name: str, email: str) -> None:
+###############
+###############
+###############
+    pass
+
 if __name__ == "__main__":
-    main()
+    argparse.add_argument("subcommand")
+    args = argparse.parse_args()
+    if args.subcommand == "add":
+        add_person(args.name, args.email)
+        pass
+    elif args.subcommand == "email":
+        check_email()
+    else:
+        raise NotImplementedError("Invalid command")
