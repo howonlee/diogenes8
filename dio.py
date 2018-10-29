@@ -152,6 +152,9 @@ def check_email() -> None:
         pass
 
 def add_person(name: str, email: str) -> None:
+    # mkdir peep_name
+    # if exists already, add numbers
+    # make Person object, serialize it to a .peep.json file in it
 ###############
 ###############
 ###############
