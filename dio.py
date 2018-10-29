@@ -68,6 +68,7 @@ class Email(object):
     def send(self, settings: Settings) -> requests.Response:
         ######################
         ###################### de-hard-code the url to make testable
+        ###################### later todo would be to de-hard-code from mailgun, but we're going w/ mailgun for now
         ######################
         url = "https://api.mailgun.net/v3/{}/messages"\
                 .format(settings.mailgun_domain)
@@ -101,6 +102,9 @@ class Settings(object):
 
     @staticmethod
     def get_settings() -> Settings:
+###################
+################### contingency for settings not existing yet
+###################
         dio_dir = os.path.expanduser("~/.diogenes")
         dio_settings_path = os.path.join(dio_dir, ".dio.json")
         with open(dio_settings_path, "r") as dio_settings_file:
@@ -168,7 +172,7 @@ def create_dio_dir() -> None:
     """ Not threadsafe but otherwise idempotent """
     dio_dirname = os.path.expanduser("~/.diogenes")
     if not os.path.exists(dio_dirname):
-        os.makedirs(dio_dirname
+        os.makedirs(dio_dirname)
 
 if __name__ == "__main__":
     create_dio_dir()
