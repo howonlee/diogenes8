@@ -7,16 +7,6 @@ import datetime
 import dataclasses
 from typing import Iterator, Dict, Any, IO
 
-def get_curr_dir() -> str:
-    return os.path.abspath(os.path.dirname(__file__))
-
-def is_valid_dir(dir_to_check: str) -> bool:
-    parent_dir, filename = os.path.split(dir_to_check)
-    if filename.startswith("."):
-        return False
-    else:
-        return os.path.isdir(dir_to_check)
-
 @dataclasses.dataclass
 class Person(object):
     email: str
@@ -45,9 +35,18 @@ class Person(object):
         return res
 
     @staticmethod
+    def is_peep_dir(dir_to_check: str) -> bool:
+        parent_dir, filename = os.path.split(dir_to_check)
+        if filename.startswith("peep_"):
+            return os.path.isdir(dir_to_check)
+        else:
+            return False
+
+    @staticmethod
     def get_all() -> Iterator[Person]:
-        dirs = os.listdir(get_curr_dir())
-        peep_dirs = filter(is_valid_dir, dirs)
+        curr_dir = os.path.abspath(os.path.dirname(__file__))
+        dirs = os.listdir(curr_dir)
+        peep_dirs = filter(is_peep_dir, dirs)
         return map(Person.from_dir, peep_dirs)
 
 
@@ -97,7 +96,8 @@ class Settings(object):
 
     @staticmethod
     def get_settings() -> Settings:
-        dio_settings_path = os.path.join(get_curr_dir(), ".dio.json")
+        curr_dir = os.path.abspath(os.path.dirname(__file__))
+        dio_settings_path = os.path.join(curr_dir, ".dio.json")
         with open(dio_settings_path, "r") as dio_settings_file:
             res = Settings.from_file(dio_settings_file)
         return res
