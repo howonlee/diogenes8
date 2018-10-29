@@ -27,6 +27,20 @@ class Person(object):
         json_res: Dict[str, Any] = json.load(person_file)
         return self.__init__(**json_res)
 
+    @staticmethod
+    def from_dir(person_dir: str) -> Person:
+        peep_settings_path = os.path.join(person_dir, ".peep.json")
+        with open(peep_settings_path, "r") as peep_settings_file:
+            res = Person.from_file(peep_settings_file)
+        return res
+
+    @staticmethod
+    def get_all() -> Iterator[Person]:
+        dirs = os.listdir(get_curr_dir())
+        peep_dirs = filter(is_valid_dir, dirs)
+        return map(Person.from_dir, peep_dirs)
+
+
 @dataclasses.dataclass
 class Email(object):
     dest_addr: str
@@ -73,11 +87,40 @@ class Settings(object):
 
     @staticmethod
     def get_settings() -> Settings:
-        dio_settings_path = os.path.join(get_curr_dir(), ".dio")
+        dio_settings_path = os.path.join(get_curr_dir(), ".dio.json")
         with open(dio_settings_path, "r") as dio_settings_file:
             res = Settings.from_file(dio_settings_file)
         return res
 
+
+class ScheduleABC(object):
+    def __init__(self):
+        pass
+
+    def should_email_day(dt: datetime.datetime) -> bool:
+        """
+        Returns True if we should email ourselves on day w/ reminders
+        False otherwise
+        """
+        raise NotImplementedError()
+
+    def should_contact(person: Person, dt: datetime.datetime) -> bool:
+        raise NotImplementedError()
+
+class DefaultSchedule(ScheduleABC):
+    def __init__(self):
+        pass
+
+    def should_email_day(dt: datetime.datetime) -> bool:
+        month, weekday = dt.month, dt.weekday
+        if month % 3 == 0 and weekday == 7: # sunday
+            return True
+        return False
+
+    def should_contact(person: Person, dt: datetime.datetime) -> bool:
+        person_hash = hash(Person)
+        _, num_days_in_month = calendar.monthrange(day.year, day.month)
+        return person_hash % num_sundays_in_month == day.day
 
 def is_valid_dir(dir_to_check: str) -> bool:
     parent_dir, filename = os.path.split(dir_to_check)
@@ -88,45 +131,6 @@ def is_valid_dir(dir_to_check: str) -> bool:
 
 def get_curr_dir() -> str:
     return os.path.abspath(os.path.dirname(__file__))
-
-def get_people_dirs() -> Iterator[str]:
-    """
-    Gets the list of people corresponding to the current
-    installation of diogenes
-    """
-    dirs = os.listdir(get_curr_dir())
-    return filter(is_valid_dir, dirs)
-
-def get_people() -> Iterator[Person]:
-    return map(get_person, get_people_dirs())
-
-def get_person(person_dir: str) -> Person:
-    """
-    Gets the dictionary representation of a person from
-    a str denoting the directory corresponding to the person
-    """
-    peep_settings_path = os.path.join(person_dir, ".peep")
-    with open(peep_settings_path, "r") as peep_settings_file:
-        res = Person.from_file(peep_settings_file)
-    return res
-
-def should_email_day(dt: datetime.datetime) -> bool:
-    """
-    Returns True if we should email ourselves on day w/ reminders
-    False otherwise
-    """
-    month, weekday = dt.month, dt.weekday
-    if month % 3 == 0 and weekday == 7: # sunday
-        return True
-    return False
-
-def should_contact(person: Person, day: datetime.datetime) -> bool:
-    """
-    per week, to be honest
-    """
-    person_hash = hash(Person)
-    _, num_days_in_month = calendar.monthrange(day.year, day.month)
-    return person_hash % num_sundays_in_month == day.day
 
 def main() -> None:
     if should_email_day(datetime.datetime.today()):
