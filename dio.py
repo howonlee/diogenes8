@@ -76,9 +76,11 @@ class Email(object):
                 .format(settings.mailgun_domain)
         auth = ("api", settings.mailgun_api_key)
         data = self.to_mailgun_data(settings)
-        response = requests.post(url, auth=auth, data=data)
-        response.raise_for_status()
-        return response
+        print(data)
+        return None
+        # response = requests.post(url, auth=auth, data=data)
+        # response.raise_for_status()
+        # return response
 
     @staticmethod
     def from_person(person: Person) -> Email:
