@@ -1,6 +1,12 @@
 Use pyfakefs to mock filesystem
 Avoid doing email at all, I think
 
-Overall goal is to create pip installable dealio, which presupposes ripping out the mailgun and making it work
+YAML for serialization? Presumed trusted, anyhow
 
-Search for "how goes life for you" for dates in which i contacted peeps
+Overall goal is to create pip installable dealio
+
+Search for "how goes life for you" for dates in which i contacted peeps - would rather have that functionality natively, which entails storing the recs
+
+No queues anymore, I think
+
+Worth being able to do recursive file directory stuff
