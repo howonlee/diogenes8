@@ -184,6 +184,7 @@ def add_person(name: str, email: str) -> None:
     peep_json_filename = os.path.join(peep_dirname, "peep.json")
     with open(peep_json_filename, "w") as peep_json_file:
         new_peep.to_file(peep_json_file)
+    print("added new person: {} with email {}".format(name, email))
 
 def create_dio_dir_if_not_exists() -> None:
     """ Not threadsafe but otherwise idempotent """
@@ -192,12 +193,12 @@ def create_dio_dir_if_not_exists() -> None:
         os.makedirs(dio_dirname)
 
 if __name__ == "__main__":
-    create_dio_dir_if_not_exists()
     parser = argparse.ArgumentParser()
     parser.add_argument("subcommand")
     parser.add_argument("--name")
     parser.add_argument("--email")
     args = parser.parse_args()
+    create_dio_dir_if_not_exists()
     if args.subcommand == "add":
         if not args.name:
             raise IOError("Needs a name")
