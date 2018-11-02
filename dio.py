@@ -18,14 +18,14 @@ class DioDir(object):
 
 @dataclasses.dataclass
 class Person(object):
-    email: str
     name: str
+    email: str
     salt: str = str(random.randint(1e30, 9e30))
 
     def __hash__(self) -> long:
         return hash("{}_{}_{}".format(
-                    self.email,
                     self.name,
+                    self.email,
                     self.salt))
 
     def to_file(person_file: IO[str]) -> None:
@@ -112,17 +112,15 @@ class Settings(object):
         return self.__init__(**json_res)
 
     @staticmethod
-    def create_settings_if_not_exists(dio_dir: str) -> None:
-        default_settings = Settings(mailgun_domain="",
-                                    mailgun_api_key="")
-        with open(os.path.join(dio_dir, ".dio.json"), "w") as settings_file:
-            default_settings.to_file(settings_file)
+    def raise_if_no_settings(dio_dir: str) -> None:
+        if not os.path.exists(os.path.join(dio_dir, ".dio.json")):
+            raise Exception("Needs a config file")
 
     @staticmethod
     def get_settings() -> Settings:
         create_dio_dir_if_not_exists()
         dio_dir = os.path.expanduser("~/.diogenes")
-        create_settings_if_not_exists(dio_dir)
+        raise_if_no_settings(dio_dir)
         dio_settings_path = os.path.join(dio_dir, ".dio.json")
         with open(dio_settings_path, "r") as dio_settings_file:
             res = Settings.from_file(dio_settings_file)
@@ -175,19 +173,14 @@ def check_email() -> None:
         pass
 
 def add_person(name: str, email: str) -> None:
-##############
-##############
-##############
-##############
-    peep_dirname = NotImplemented() ############
-    # mkdir peep_name
-    # if exists already, add numbers
-    if not os.path.exists(dio_dirname):
-        os.makedirs(dio_dirname)
-    else:
-        os.makedirs(dio_dirname + NotImplemented)
-    new_peep = Person(NotImplemented)
-    peep_json_filename = NotImplemented
+    # crude hack to prevent dir traversal
+    peep_dirname = os.path.expanduser(
+            "~/.diogenes/peep_{}".format(os.path.basename(name))
+            )
+    if not os.path.exists(peep_dirname):
+        os.makedirs(peep_dirname)
+    new_peep = Person(name, email)
+    peep_json_filename = os.path.join(peep_dirname, "peep.json")
     with open(peep_json_filename, "w") as peep_json_file:
         new_peep.to_file(peep_json_file)
 
@@ -199,11 +192,17 @@ def create_dio_dir_if_not_exists() -> None:
 
 if __name__ == "__main__":
     create_dio_dir_if_not_exists()
-    argparse.add_argument("subcommand")
-    args = argparse.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("subcommand")
+    parser.add_argument("name", optional=True)
+    parser.add_argument("email", optional=True)
+    args = parse.parse_args()
     if args.subcommand == "add":
+        if not args.name:
+            raise IOError("Needs a name")
+        if not args.email:
+            raise IOError("Needs an email")
         add_person(args.name, args.email)
-        pass
     elif args.subcommand == "email":
         check_email()
     else:
