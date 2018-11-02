@@ -20,21 +20,21 @@ class DioDir(object):
 class Person(object):
     name: str
     email: str
-    salt: str = str(random.randint(1e30, 9e30))
+    salt: str = str(random.randint(int(1e30), int(9e30)))
 
-    def __hash__(self) -> long:
+    def __hash__(self) -> int:
         return hash("{}_{}_{}".format(
                     self.name,
                     self.email,
                     self.salt))
 
-    def to_file(person_file: IO[str]) -> None:
+    def to_file(self, person_file: IO[str]) -> None:
         json.dump(dataclasses.asdict(self), person_file)
 
     @staticmethod
     def from_file(person_file: IO[str]) -> Person:
         json_res: Dict[str, Any] = json.load(person_file)
-        return self.__init__(**json_res)
+        return Person(**json_res)
 
     @staticmethod
     def from_dir(person_dir: str) -> Person:
@@ -56,7 +56,7 @@ class Person(object):
         create_dio_dir_if_not_exists()
         dio_dir = os.path.expanduser("~/.diogenes")
         dirs = os.listdir(dio_dir)
-        peep_dirs = filter(is_peep_dir, dirs)
+        peep_dirs = filter(Person.is_peep_dir, dirs)
         return map(Person.from_dir, peep_dirs)
 
 
@@ -103,13 +103,13 @@ class Settings(object):
     mailgun_domain: str
     mailgun_api_key: str
 
-    def to_file(settings_file: IO[str]) -> None:
+    def to_file(self, settings_file: IO[str]) -> None:
         json.dump(dataclasses.asdict(self), settings_file)
 
     @staticmethod
     def from_file(settings_file: IO[str]) -> Settings:
         json_res: Dict[str, Any] = json.load(settings_file)
-        return self.__init__(**json_res)
+        return Settings(**json_res)
 
     @staticmethod
     def raise_if_no_settings(dio_dir: str) -> None:
@@ -120,7 +120,7 @@ class Settings(object):
     def get_settings() -> Settings:
         create_dio_dir_if_not_exists()
         dio_dir = os.path.expanduser("~/.diogenes")
-        raise_if_no_settings(dio_dir)
+        Settings.raise_if_no_settings(dio_dir)
         dio_settings_path = os.path.join(dio_dir, ".dio.json")
         with open(dio_settings_path, "r") as dio_settings_file:
             res = Settings.from_file(dio_settings_file)
@@ -131,21 +131,21 @@ class ScheduleABC(ABC):
     def __init__(self):
         pass
 
-    def should_email_day(dt: datetime.datetime) -> bool:
+    def should_email_day(self, dt: datetime.datetime) -> bool:
         """
         Returns True if we should email ourselves on day w/ reminders
         False otherwise
         """
         raise NotImplementedError()
 
-    def should_contact(person: Person, dt: datetime.datetime) -> bool:
+    def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
         raise NotImplementedError()
 
 class DefaultSchedule(ScheduleABC):
     def __init__(self):
         pass
 
-    def should_email_day(dt: datetime.datetime) -> bool:
+    def should_email_day(self, dt: datetime.datetime) -> bool:
         # isocalendar has Monday 1 and Sunday 7
         # we want every 2nd Saturday
         _, weeknumber, weekday = dt.isocalendar()
@@ -153,7 +153,7 @@ class DefaultSchedule(ScheduleABC):
             return True
         return False
 
-    def should_contact(person: Person, dt: datetime.datetime) -> bool:
+    def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
         # 28 Dec is always in last week of year
         num_weeks_in_year = datetime.date(dt.year, 12, 28)\
                 .isocalendar()[1]
@@ -163,10 +163,11 @@ class DefaultSchedule(ScheduleABC):
         return (person_hash % num_weeks_in_year) == rounded_weeknumber
 
 def check_email() -> None:
-    if should_email_day(datetime.datetime.today()):
+    curr_schedule = DefaultSchedule()
+    if curr_schedule.should_email_day(datetime.datetime.today()):
         curr_settings = Settings.get_settings()
-        for person in get_people():
-            if should_contact(person, datetime.datetime.today()):
+        for person in Person.get_all():
+            if curr_schedule.should_contact(person, datetime.datetime.today()):
                 curr_email = Email.from_person(person)
                 curr_email.send(curr_settings)
     else:
@@ -194,9 +195,9 @@ if __name__ == "__main__":
     create_dio_dir_if_not_exists()
     parser = argparse.ArgumentParser()
     parser.add_argument("subcommand")
-    parser.add_argument("name", optional=True)
-    parser.add_argument("email", optional=True)
-    args = parse.parse_args()
+    parser.add_argument("--name")
+    parser.add_argument("--email")
+    args = parser.parse_args()
     if args.subcommand == "add":
         if not args.name:
             raise IOError("Needs a name")

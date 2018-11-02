@@ -1,3 +1,4 @@
 # preface peeps' folders with peep_ so I can upload to github i guess
 peep_*
 __pycache__
+.mypy_cache/
