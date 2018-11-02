@@ -39,9 +39,9 @@ class Person(object):
 
     @staticmethod
     def from_dir(person_dir: str) -> Person:
-        peep_settings_path = os.path.join(person_dir, ".peep.json")
-        with open(peep_settings_path, "r") as peep_settings_file:
-            res = Person.from_file(peep_settings_file)
+        person_filepath = os.path.join(person_dir, ".peep.json")
+        with open(person_filepath, "r") as person_file:
+            res = Person.from_file(person_file)
         return res
 
     @staticmethod
@@ -72,35 +72,6 @@ class Recs(object):
     def from_file(recs_file: IO[str]) -> Recs:
         json_res: Dict[str, Any] = json.load(recs_file)
         return Recs(**json_res)
-
-
-@dataclasses.dataclass
-class Settings(object):
-    mailgun_domain: str
-    mailgun_api_key: str
-
-    def to_file(self, settings_file: IO[str]) -> None:
-        json.dump(dataclasses.asdict(self), settings_file)
-
-    @staticmethod
-    def from_file(settings_file: IO[str]) -> Settings:
-        json_res: Dict[str, Any] = json.load(settings_file)
-        return Settings(**json_res)
-
-    @staticmethod
-    def raise_if_no_settings(dio_dir: str) -> None:
-        if not os.path.exists(os.path.join(dio_dir, ".dio.json")):
-            raise Exception("Needs a config file")
-
-    @staticmethod
-    def get_settings() -> Settings:
-        create_dio_dir_if_not_exists()
-        dio_dir = os.path.expanduser("~/.diogenes")
-        Settings.raise_if_no_settings(dio_dir)
-        dio_settings_path = os.path.join(dio_dir, ".dio.json")
-        with open(dio_settings_path, "r") as dio_settings_file:
-            res = Settings.from_file(dio_settings_file)
-        return res
 
 
 class ScheduleABC(ABC):
@@ -141,7 +112,6 @@ class DefaultSchedule(ScheduleABC):
 def get_recs() -> None:
     curr_schedule = DefaultSchedule()
     if curr_schedule.should_email_day(datetime.datetime.today()):
-        curr_settings = Settings.get_settings()
         should_contact_today = functools.partial(
             curr_schedule.should_contact,
             dt=datetime.datetime.today()
