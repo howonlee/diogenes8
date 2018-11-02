@@ -61,41 +61,16 @@ class Person(object):
 
 
 @dataclasses.dataclass
-class Email(object):
-    dest_addr: str
-    subject: str
-    text: str
+class Recs(object):
+    people: List[People]
 
-    def to_mailgun_data(self, settings: Settings):
-        return {
-            "from": "Diogenes <mailgun@{}>".format(settings.mailgun_domain),
-            "to": self.dest_addr,
-            "subject": self.subject,
-            "text": self.text,
-        }
-
-    def send(self, settings: Settings) -> requests.Response:
-        ######################
-        ###################### de-hard-code the url to make testable
-        ###################### later todo would be to de-hard-code from mailgun, but we're going w/ mailgun for now
-        ######################
-        url = "https://api.mailgun.net/v3/{}/messages"\
-                .format(settings.mailgun_domain)
-        auth = ("api", settings.mailgun_api_key)
-        data = self.to_mailgun_data(settings)
-        print(data)
-        return None
-        # response = requests.post(url, auth=auth, data=data)
-        # response.raise_for_status()
-        # return response
+    def to_file(self, recs_file: IO[str]) -> None:
+        json.dump(dataclasses.asdict(self), recs_file)
 
     @staticmethod
-    def from_person(person: Person) -> Email:
-        subject: str = f"[Diogenes] Contact {person.name}"
-        text: str = f"It's time to contact {person.name}. Email is {person.email}"
-        return Email(dest_addr=person.email,
-                     subject=subject,
-                     text=text)
+    def from_file(recs_file: IO[str]) -> recs:
+        json_res: Dict[str, Any] = json.load(recs_file)
+        return Recs(**json_res)
 
 
 @dataclasses.dataclass
