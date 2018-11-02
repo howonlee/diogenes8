@@ -7,8 +7,9 @@ import math
 import datetime
 import argparse
 import dataclasses
+import functools
 from abc import ABC
-from typing import Iterator, Dict, Any, IO
+from typing import Iterator, Dict, Any, IO, List
 
 class DioDir(object):
     """
@@ -62,13 +63,13 @@ class Person(object):
 
 @dataclasses.dataclass
 class Recs(object):
-    people: List[People]
+    people: List[Person]
 
     def to_file(self, recs_file: IO[str]) -> None:
         json.dump(dataclasses.asdict(self), recs_file)
 
     @staticmethod
-    def from_file(recs_file: IO[str]) -> recs:
+    def from_file(recs_file: IO[str]) -> Recs:
         json_res: Dict[str, Any] = json.load(recs_file)
         return Recs(**json_res)
 
@@ -137,15 +138,19 @@ class DefaultSchedule(ScheduleABC):
         rounded_weeknumber = int(math.ceil(weeknumber / 2.) * 2)
         return (person_hash % num_weeks_in_year) == rounded_weeknumber
 
-def check_email() -> None:
+def get_recs() -> None:
     curr_schedule = DefaultSchedule()
     if curr_schedule.should_email_day(datetime.datetime.today()):
         curr_settings = Settings.get_settings()
-        for person in Person.get_all():
-            if curr_schedule.should_contact(person, datetime.datetime.today()):
-                curr_email = Email.from_person(person)
-                curr_email.send(curr_settings)
+        should_contact_today = functools.partial(
+            curr_schedule.should_contact,
+            dt=datetime.datetime.today()
+        )
+        people = Recs(list(filter(should_contact_today, Person.get_all())))
+        print(people)
+        print("got recs")
     else:
+        print("no recs today")
         pass
 
 def add_person(name: str, email: str) -> None:
@@ -180,7 +185,7 @@ if __name__ == "__main__":
         if not args.email:
             raise IOError("Needs an email")
         add_person(args.name, args.email)
-    elif args.subcommand == "email":
-        check_email()
+    elif args.subcommand == "recs":
+        get_recs()
     else:
         raise NotImplementedError("Invalid command")
