@@ -2,3 +2,4 @@
 peep_*
 __pycache__
 .mypy_cache/
+.hypothesis/
