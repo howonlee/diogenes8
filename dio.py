@@ -39,8 +39,9 @@ class Person(object):
                     self.email,
                     self.salt))
 
-    def to_file(self, person_file: IO[str]) -> None:
-        json.dump(dataclasses.asdict(self), person_file)
+    def to_file(self, person_filename: str) -> None:
+        with open(person_filename, "w") as person_file:
+            json.dump(dataclasses.asdict(self), person_file)
 
     def get_dir(self, dio_dir: DioDir) -> str:
         return dio_dir.dirname +\
@@ -51,16 +52,15 @@ class Person(object):
         return os.path.join(dirname, ".peep.json")
 
     @staticmethod
-    def from_file(person_file: IO[str]) -> Person:
-        json_res: Dict[str, Any] = json.load(person_file)
-        return Person(**json_res)
+    def from_file(person_filename: str) -> Person:
+        with open(person_filename, "r") as person_file:
+            json_res: Dict[str, Any] = json.load(person_file)
+            return Person(**json_res)
 
     @staticmethod
     def from_dir(person_dir: str) -> Person:
         person_filepath = Person.get_filename(person_dir)
-        with open(person_filepath, "r") as person_file:
-            res = Person.from_file(person_file)
-        return res
+        return Person.from_file(person_filepath)
 
     @staticmethod
     def is_peep_dir(dir_to_check: str) -> bool:
@@ -83,8 +83,7 @@ class Person(object):
         if not os.path.exists(peep_dirname):
             os.makedirs(peep_dirname)
         peep_json_filename = Person.get_filename(peep_dirname)
-        with open(peep_json_filename, "w") as peep_json_file:
-            new_peep.to_file(peep_json_file)
+        new_peep.to_file(peep_json_filename)
 
     @staticmethod
     def remove_person(peep: Person, dio_dir: DioDir) -> None:
@@ -99,13 +98,15 @@ class Person(object):
 class Recs(object):
     people: List[Person]
 
-    def to_file(self, recs_file: IO[str]) -> None:
-        json.dump(dataclasses.asdict(self), recs_file)
+    def to_file(self, recs_filename: str) -> None:
+        with open(recs_filename, "w") as recs_file:
+            json.dump(dataclasses.asdict(self), recs_file)
 
     @staticmethod
-    def from_file(recs_file: IO[str]) -> Recs:
-        json_res: Dict[str, Any] = json.load(recs_file)
-        return Recs(**json_res)
+    def from_file(recs_filename: str) -> Recs:
+        with open(recs_filename, "r") as recs_file:
+            json_res: Dict[str, Any] = json.load(recs_file)
+            return Recs(**json_res)
 
 
 class ScheduleABC(ABC):

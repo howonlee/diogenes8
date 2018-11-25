@@ -6,51 +6,52 @@ import pytest
 import os
 
 @st.composite
-def person_str(draw, name=st.text(), email=st.text(), salt=st.text()):
+def person_st(draw, name=st.text(), email=st.text(), salt=st.text()):
     return dio.Person(
             name=draw(name),
             email=draw(email),
             salt=draw(salt))
 
 @st.composite
-def dio_dir(draw, dirname=hy_fs.fspaths()):
+def dio_dir_st(draw, dirname=hy_fs.fspaths()):
     return dio.DioDir(dirname=draw(dirname))
 
 @st.composite
-def sched_str(draw):
+def sched_st(draw):
     return dio.DefaultSchedule()
 
 @st.composite
-def recs_str(draw):
-    return dio.Recs(people=st.lists(person_str()))
+def recs_st(draw):
+    return dio.Recs(people=st.lists(person_st()))
 
-@hp.given(peep=person_str())
+@hp.given(peep=person_st())
 def test_person_init(peep):
     # assert not null
     assert peep
 
-@hp.given(peep=person_str())
-def test_person_file_encode_involution(fs, peep):
-    ##############
-    ##############
-    ##############
-    pass
+@hp.given(peep=person_st(), dio_dir=dio_dir_st())
+def test_person_file_encode_involution(fs, peep, dio_dir):
+    dirname = peep.get_dir(dio_dir)
+    filename = dio.Person.get_filename(dirname)
+    peep.to_file(filename)
+    new_peep = Person.from_file(filename)
+    assert peep == new_peep
 
-@hp.given(peep=person_str())
+@hp.given(peep=person_st())
 def test_person_folder_encode_involution(peep):
     ##############
     ##############
     ##############
     pass
 
-@hp.given(peep=person_str())
+@hp.given(peep=person_st())
 def test_is_peep_dir_idempotence(peep):
     ##############
     ##############
     ##############
     pass
 
-@hp.given(peep=person_str())
+@hp.given(peep=person_st())
 def test_get_all_idempotence(peep):
     ##############
     ##############
@@ -59,28 +60,28 @@ def test_get_all_idempotence(peep):
 
 # fs from pyfakefs
 
-@hp.given(dio_dir=dio_dir())
+@hp.given(dio_dir=dio_dir_st())
 def test_dio_dir_creation_idempotence(fs, dio_dir):
     dio_dir.create_if_not_exists()
     assert os.path.exists(dio_dir.dirname)
     dio_dir.create_if_not_exists()
     assert os.path.exists(dio_dir.dirname)
 
-@hp.given(recs=recs_str())
+@hp.given(recs=recs_st())
 def test_recs_encoding_involution(recs):
     ##############
     ##############
     ##############
     pass
 
-@hp.given(sched=sched_str())
+@hp.given(sched=sched_st())
 def test_schedule_should_email_day_idempotence(sched):
     ##############
     ##############
     ##############
     pass
 
-@hp.given(sched=sched_str())
+@hp.given(sched=sched_st())
 def test_schedule_should_contact_idempotence(sched):
     ##############
     ##############
@@ -93,28 +94,28 @@ def test_get_recs_idempotence():
     ##############
     pass
 
-@hp.given(peep=person_str())
+@hp.given(peep=person_st())
 def test_add_person_idempotence(peep):
     ##############
     ##############
     ##############
     pass
 
-@hp.given(peep=person_str())
-def test_add_person_associativity(peep):
-    ##############
-    ##############
-    ##############
-    pass
-
-@hp.given(peep=person_str())
+@hp.given(peep=person_st())
 def test_remove_person_idempotence(peep):
     ##############
     ##############
     ##############
     pass
 
-@hp.given(peep=person_str())
+@hp.given(peep=person_st())
+def test_add_person_associativity(peep):
+    ##############
+    ##############
+    ##############
+    pass
+
+@hp.given(peep=person_st())
 def test_peep_state_machine(peep):
     ##############
     ##############
