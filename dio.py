@@ -3,6 +3,8 @@ import calendar
 import os
 import shutil
 import json
+import smtplib
+import email
 import random
 import math
 import datetime
@@ -155,21 +157,38 @@ def get_recs(dio_dir: DioDir, schedule: ScheduleABC, dt_to_rec: datetime.datetim
     else:
         return None
 
-def send_recs(res: Optional[List[Person]], next_day: datetime.date):
+def recs_to_message(res: Optional[List[Person]], next_day: datetime.date) -> str:
     if not res:
-        print("Next emailing day is : {}".format(next_day))
+        return "Next emailing day is : {}".format(next_day)
     else:
-        print("\n".join([peep.name for peep in res]))
-    pass
+        return "\n".join([peep.name for peep in res])
+
+def send_message(contents: str):
+    today: datetime.date = datetime.datetime.now().date()
+    smtp_url: str = os.environ["DIO_SMTP_URL"]
+    smtp_port: str = os.environ["DIO_SMTP_PORT"]
+    smtp_username: str = os.environ["DIO_SMTP_USERNAME"]
+    smtp_password: str = os.environ["DIO_SMTP_PASSWORD"]
+    smtp_dest_email: str = os.environ["DIO_DEST_EMAIL"]
+    msg_obj: email.message.EmailMessage = email.message.EmailMessage()
+    msg_obj['From'] = smtp_username
+    msg_obj['To'] = smtp_dest_email
+    msg_obj['Subject'] = "Diogenes | {}".format(str(today))
+    msg_obj.set_content(contents)
+    with smtp.SMTP(smtp_url, smtp_port) as smtp_server:
+        server.ehlo()
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+        server.send_message(msg_obj)
 
 def main_recs():
-    dio_dir = DioDir()
+    dio_dir: DioDir = DioDir()
     dio_dir.create_if_not_exists()
-    sched = DefaultSchedule()
-    today = datetime.datetime.now()
+    sched: ScheduleABC = DefaultSchedule()
+    today: datetime.datetime = datetime.datetime.now()
     res: Optional[List[Person]] = get_recs(dio_dir, sched, today)
     next_day: datetime.date = sched.next_emailing_day(today).date()
-    send_recs(res, next_day)
+    message: str = recs_to_messages(res, next_day)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
