@@ -46,13 +46,9 @@ class Person(object):
     """
     We want a general data object, really
     """
-    def __init__(self, name: str, email: str, salt: Optional[str]):
-        self.name = name
-        self.email = email
-        if not salt:
-            self.salt = str(random.randint(int(1e30), int(9e30)))
-        else:
-            self.salt = salt
+    name: str
+    email: str
+    salt: str = str(random.randint(int(1e30), int(9e30)))
 
     def __hash__(self) -> int:
         return hash("{}_{}_{}".format(
@@ -174,7 +170,7 @@ if __name__ == "__main__":
             raise IOError("Needs a name")
         if not args.email:
             raise IOError("Needs an email")
-        new_peep = Person(name=args.name)
+        new_peep = Person(name=args.name, email=args.email)
         new_peep.create(dio_dir)
     elif args.subcommand == "recs":
         get_recs(dio_dir, sched, today)
