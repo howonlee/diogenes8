@@ -161,12 +161,14 @@ def recs_to_message(res: Optional[List[Person]], next_day: datetime.date) -> str
     if not res:
         return "Next emailing day is : {}".format(next_day)
     else:
-        return "\n".join([peep.name for peep in res])
+        return "\n".join(
+            ["\t".join([peep.name, peep.email]) for peep in res]
+        )
 
 def send_message(contents: str) -> None:
     today: datetime.date = datetime.datetime.now().date()
     smtp_url: str = os.environ["DIO_SMTP_URL"]
-    smtp_port: str = os.environ["DIO_SMTP_PORT"]
+    smtp_port: int = int(os.environ["DIO_SMTP_PORT"])
     smtp_username: str = os.environ["DIO_SMTP_USERNAME"]
     smtp_password: str = os.environ["DIO_SMTP_PASSWORD"]
     smtp_dest_email: str = os.environ["DIO_DEST_EMAIL"]
@@ -175,7 +177,7 @@ def send_message(contents: str) -> None:
     msg_obj['To'] = smtp_dest_email
     msg_obj['Subject'] = "Diogenes | {}".format(str(today))
     msg_obj.set_content(contents)
-    with smtp.SMTP(smtp_url, smtp_port) as smtp_server:
+    with smtplib.SMTP(smtp_url, smtp_port) as server:
         server.ehlo()
         server.starttls()
         server.login(smtp_username, smtp_password)
@@ -188,7 +190,7 @@ def main_recs(send:bool=True) -> None:
     today: datetime.datetime = datetime.datetime.now()
     res: Optional[List[Person]] = get_recs(dio_dir, sched, today)
     next_day: datetime.date = sched.next_emailing_day(today).date()
-    message: str = recs_to_messages(res, next_day)
+    message: str = recs_to_message(res, next_day)
     if send:
         send_message(message)
     else:
