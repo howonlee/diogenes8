@@ -159,7 +159,7 @@ def send_recs(res: Optional[List[Person]], next_day: datetime.date):
     if not res:
         print("Next emailing day is : {}".format(next_day))
     else:
-        print("\n".join(res))
+        print("\n".join([peep.name for peep in res]))
     pass
 
 def main_recs():
