@@ -156,8 +156,8 @@ class DefaultSchedule(ScheduleABC):
 
     def should_email_day(self, dt: datetime.datetime) -> bool:
         # use date, since otherwise the finer increments mess things up wrt stability
-        # so, 28% of days, or about 100 days/year
-        return hash(dt.date()) % 100 <= 28
+        # so, 20% of days, or about 75 days/year
+        return hash(dt.date()) % 100 <= 20
     
     def next_emailing_day(self, dt: datetime.datetime) -> datetime.datetime:
         return super().next_emailing_day(dt)
