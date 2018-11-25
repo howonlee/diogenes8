@@ -189,6 +189,7 @@ def main_recs():
     res: Optional[List[Person]] = get_recs(dio_dir, sched, today)
     next_day: datetime.date = sched.next_emailing_day(today).date()
     message: str = recs_to_messages(res, next_day)
+    send_message(message)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
