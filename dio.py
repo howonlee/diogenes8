@@ -87,7 +87,7 @@ class Person(object):
             return os.path.isdir(dir_to_check)
         else:
             return False
-
+    
     @staticmethod
     def get_all(dio_dir: DioDir) -> Iterator[Person]:
         dio_dir.create_if_not_exists()
@@ -105,6 +105,9 @@ class ScheduleABC(ABC):
         Returns True if we should email ourselves on day w/ reminders
         False otherwise
         """
+        raise NotImplementedError()
+
+    def next_emailing_day(self, dt: datetime.datetime):
         raise NotImplementedError()
 
     def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
@@ -126,6 +129,12 @@ class DefaultSchedule(ScheduleABC):
         if weeknumber in emailing_weeks:
             return True
         return False
+    
+    def next_emailing_day(self, dt: datetime.datetime):
+        curr_dt = dt
+        while not self.should_email_day(curr_dt):
+            curr_dt += datetime.timedelta(day=1)
+        return curr_dt
 
     def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
         # 28 Dec is always in last week of year
