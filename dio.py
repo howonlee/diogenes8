@@ -48,6 +48,20 @@ class Person(object):
         return dio_dir.dirname +\
                 "/peep_{}".format(os.path.basename(self.name))
 
+    def create(self, dio_dir: DioDir) -> None:
+        peep_dirname = self.get_dir(dio_dir)
+        if not os.path.exists(peep_dirname):
+            os.makedirs(peep_dirname)
+        peep_json_filename = Person.get_filename(peep_dirname)
+        self.to_file(peep_json_filename)
+
+    def remove(self, dio_dir: DioDir) -> None:
+        peep_dirname = self.get_dir(dio_dir)
+        if not os.path.exists(peep_dirname):
+            raise Exception("Peep directory does not exist to remove")
+        else:
+            shutil.rmtree(peep_dirname)
+
     @staticmethod
     def get_filename(dirname: str) -> str:
         return os.path.join(dirname, ".peep.json")
@@ -77,22 +91,6 @@ class Person(object):
         dirs = os.listdir(dio_dir.dirname)
         peep_dirs = filter(Person.is_peep_dir, dirs)
         return map(Person.from_dir, peep_dirs)
-
-    @staticmethod
-    def create_person(new_peep: Person, dio_dir: DioDir) -> None:
-        peep_dirname = new_peep.get_dir(dio_dir)
-        if not os.path.exists(peep_dirname):
-            os.makedirs(peep_dirname)
-        peep_json_filename = Person.get_filename(peep_dirname)
-        new_peep.to_file(peep_json_filename)
-
-    @staticmethod
-    def remove_person(peep: Person, dio_dir: DioDir) -> None:
-        peep_dirname = peep.get_dir(dio_dir)
-        if not os.path.exists(peep_dirname):
-            raise Exception("Peep directory does not exist to remove")
-        else:
-            shutil.rmdir(peep_dirname)
 
 
 @dataclasses.dataclass
@@ -172,7 +170,8 @@ if __name__ == "__main__":
             raise IOError("Needs a name")
         if not args.email:
             raise IOError("Needs an email")
-        Person.create_person_dir(args.name, args.email, dio_dir)
+        new_peep = Person(name=args.name, email=args.email)
+        new_peep.create(dio_dir)
     elif args.subcommand == "recs":
         get_recs(dio_dir, sched, today)
     else:

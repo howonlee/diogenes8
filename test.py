@@ -33,7 +33,7 @@ def test_person_init(peep):
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
 def test_person_file_encode_involution(fs, peep, dio_dir):
     dio_dir.create_if_not_exists()
-    dio.Person.create_person(peep, dio_dir)
+    peep.create(dio_dir)
     dirname = peep.get_dir(dio_dir)
     filename = dio.Person.get_filename(dirname)
     peep.to_file(filename)
@@ -43,7 +43,8 @@ def test_person_file_encode_involution(fs, peep, dio_dir):
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
 def test_person_folder_encode_involution(fs, peep, dio_dir):
     dio_dir.create_if_not_exists()
-    dio.Person.create_person(peep, dio_dir)
+    peep.create(dio_dir)
+    dirname = peep.get_dir(dio_dir)
     dirname = peep.get_dir(dio_dir)
     filename = dio.Person.get_filename(dirname)
     peep.to_file(filename)
