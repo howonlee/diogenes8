@@ -50,17 +50,18 @@ class Person(object):
         return dio_dir.dirname +\
                 "/peep_{}".format(os.path.basename(self.name))
 
-    def create(self, dio_dir: DioDir) -> None:
+    def save(self, dio_dir: DioDir) -> None:
+        """ upserts """
         peep_dirname = self.get_dir(dio_dir)
         if not os.path.exists(peep_dirname):
             os.makedirs(peep_dirname)
         peep_json_filename = Person.get_filename(peep_dirname)
         self.to_file(peep_json_filename)
 
-    def remove(self, dio_dir: DioDir) -> None:
+    def delete(self, dio_dir: DioDir) -> None:
         peep_dirname = self.get_dir(dio_dir)
         if not os.path.exists(peep_dirname):
-            raise Exception("Peep directory does not exist to remove")
+            raise Exception("Peep directory does not exist to delete")
         else:
             shutil.rmtree(peep_dirname)
 
@@ -106,7 +107,7 @@ class ScheduleABC(ABC):
         """
         raise NotImplementedError()
 
-    def next_emailing_day(self, dt: datetime.datetime):
+    def next_emailing_day(self, dt: datetime.datetime) -> datetime.datetime:
         raise NotImplementedError()
 
     def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
@@ -129,7 +130,7 @@ class DefaultSchedule(ScheduleABC):
             return True
         return False
     
-    def next_emailing_day(self, dt: datetime.datetime):
+    def next_emailing_day(self, dt: datetime.datetime) -> datetime.datetime:
         curr_dt = dt
         while not self.should_email_day(curr_dt):
             curr_dt += datetime.timedelta(days=1)
@@ -171,7 +172,7 @@ if __name__ == "__main__":
         if not args.email:
             raise IOError("Needs an email")
         new_peep = Person(name=args.name, email=args.email)
-        new_peep.create(dio_dir)
+        new_peep.save(dio_dir)
     elif args.subcommand == "recs":
         get_recs(dio_dir, sched, today)
     else:

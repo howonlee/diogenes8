@@ -29,7 +29,7 @@ def test_person_init(peep):
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
 def test_person_file_encode_involution(fs, peep, dio_dir):
     dio_dir.create_if_not_exists()
-    peep.create(dio_dir)
+    peep.save(dio_dir)
     dirname = peep.get_dir(dio_dir)
     filename = dio.Person.get_filename(dirname)
     new_peep = dio.Person.from_file(filename)
@@ -38,7 +38,7 @@ def test_person_file_encode_involution(fs, peep, dio_dir):
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
 def test_person_folder_encode_involution(fs, peep, dio_dir):
     dio_dir.create_if_not_exists()
-    peep.create(dio_dir)
+    peep.save(dio_dir)
     dirname = peep.get_dir(dio_dir)
     new_peep = dio.Person.from_dir(dirname)
     assert peep == new_peep
@@ -89,8 +89,8 @@ def test_get_recs_idempotence():
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
 def test_add_person_idempotence(fs, peep, dio_dir):
     dio_dir.create_if_not_exists()
-    peep.create(dio_dir)
-    peep.create(dio_dir)
+    peep.save(dio_dir)
+    peep.save(dio_dir)
     dirname = peep.get_dir(dio_dir)
     new_peep = dio.Person.from_dir(dirname)
     assert peep == new_peep
@@ -98,11 +98,11 @@ def test_add_person_idempotence(fs, peep, dio_dir):
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
 def test_remove_person_idempotence(fs, peep, dio_dir):
     dio_dir.create_if_not_exists()
-    peep.create(dio_dir)
-    peep.remove(dio_dir)
+    peep.save(dio_dir)
+    peep.delete(dio_dir)
     with pytest.raises(Exception) as exc:
-        peep.remove(dio_dir)
-        assert "remove" in str(exc.value)
+        peep.delete(dio_dir)
+        assert "delete" in str(exc.value)
 
 @hp.given(peep=person_st())
 def test_add_person_associativity(peep):
