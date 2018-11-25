@@ -64,9 +64,9 @@ class Person(object):
     @staticmethod
     def get_all(dio_dir: DioDir) -> Iterator[Person]:
         dio_dir.create_if_not_exists()
-        dirs = os.listdir(dio_dir.name)
+        dirs = os.listdir(dio_dir.dirname)
         peep_dirs = filter(Person.is_peep_dir, dirs)
-        return map(Person.from_dir, peep_dirs)a
+        return map(Person.from_dir, peep_dirs)
 
     @staticmethod
     def create_person_dir(name: str, email: str, dio_dir: DioDir) -> None:
@@ -133,13 +133,13 @@ class DefaultSchedule(ScheduleABC):
         rounded_weeknumber = int(math.ceil(weeknumber / 2.) * 2)
         return (person_hash % num_weeks_in_year) == rounded_weeknumber
 
-def get_recs(schedule: ScheduleABC, dt_to_rec: datetime.datetime) -> Optional[Recs]:
-    if schedule.should_email_day(dt_to_rec)
+def get_recs(dio_dir: DioDir, schedule: ScheduleABC, dt_to_rec: datetime.datetime) -> Optional[Recs]:
+    if schedule.should_email_day(dt_to_rec):
         should_contact_on_day = functools.partial(
             schedule.should_contact,
             dt=dt_to_rec
         )
-        return Recs(list(filter(should_contact_on_day, Person.get_all())))
+        return Recs(list(filter(should_contact_on_day, Person.get_all(dio_dir))))
     else:
         return None
 
@@ -152,6 +152,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     dio_dir = DioDir()
     dio_dir.create_if_not_exists()
+    today = datetime.datetime.now()
+    sched = DefaultSchedule()
     if args.subcommand == "add":
         if not args.name:
             raise IOError("Needs a name")
@@ -159,6 +161,6 @@ if __name__ == "__main__":
             raise IOError("Needs an email")
         Person.create_person_dir(args.name, args.email, dio_dir)
     elif args.subcommand == "recs":
-        get_recs()
+        get_recs(dio_dir, sched, today)
     else:
         raise NotImplementedError("Invalid command")

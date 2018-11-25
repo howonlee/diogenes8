@@ -2,11 +2,11 @@ import hypothesis as hp
 import hypothesis.strategies as st
 import hypothesis_fspaths as hy_fs
 import dio
-import fixtures
 import pytest
 import os
 
-@st.composite def person_str(draw, name=st.text(), email=st.text(), salt=st.text()):
+@st.composite
+def person_str(draw, name=st.text(), email=st.text(), salt=st.text()):
     return dio.Person(
             name=draw(name),
             email=draw(email),
@@ -16,12 +16,13 @@ import os
 def dio_dir(draw, dirname=hy_fs.fspaths()):
     return dio.DioDir(dirname=draw(dirname))
 
-@hp.given(person_str())
+@hp.given(peep=person_str())
 def test_person_init(peep):
     # assert not null
     assert peep
 
-def test_person_file_encode_involution(peep):
+@hp.given(peep=person_str())
+def test_person_file_encode_involution(fs, peep):
     ##############
     ##############
     ##############
@@ -49,11 +50,10 @@ def test_get_all_idempotence(peep):
 
 @hp.given(dio_dir=dio_dir())
 def test_dio_dir_creation_idempotence(fs, dio_dir):
-    dir_obj = dio.DioDir(dirname=dio_dir)
-    dir_obj.create_if_not_exists()
-    assert os.path.exists(dir_obj.dirname)
-    dir_obj.create_if_not_exists()
-    assert os.path.exists(dir_obj.dirname)
+    dio_dir.create_if_not_exists()
+    assert os.path.exists(dio_dir.dirname)
+    dio_dir.create_if_not_exists()
+    assert os.path.exists(dio_dir.dirname)
 
 def test_recs_encoding_involution(recs):
     ##############
