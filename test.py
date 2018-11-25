@@ -61,13 +61,28 @@ def test_recs_encoding_involution(recs):
     ##############
     pass
 
+def test_schedule_should_email_day_idempotence(sched):
+    ##############
+    ##############
+    ##############
+    pass
+
+def test_schedule_should_contact_idempotence(sched):
+    pass
+
+def test_get_recs_idempotence():
+    ##############
+    ##############
+    ##############
+    pass
+
 def test_add_person_idempotence(peep):
     ##############
     ##############
     ##############
     pass
 
-def test_get_recs_idempotence():
+def test_add_person_associativity(peep):
     ##############
     ##############
     ##############
