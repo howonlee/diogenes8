@@ -163,7 +163,7 @@ def recs_to_message(res: Optional[List[Person]], next_day: datetime.date) -> str
     else:
         return "\n".join([peep.name for peep in res])
 
-def send_message(contents: str):
+def send_message(contents: str) -> None:
     today: datetime.date = datetime.datetime.now().date()
     smtp_url: str = os.environ["DIO_SMTP_URL"]
     smtp_port: str = os.environ["DIO_SMTP_PORT"]
@@ -181,7 +181,7 @@ def send_message(contents: str):
         server.login(smtp_username, smtp_password)
         server.send_message(msg_obj)
 
-def main_recs():
+def main_recs(send:bool=True) -> None:
     dio_dir: DioDir = DioDir()
     dio_dir.create_if_not_exists()
     sched: ScheduleABC = DefaultSchedule()
@@ -189,7 +189,10 @@ def main_recs():
     res: Optional[List[Person]] = get_recs(dio_dir, sched, today)
     next_day: datetime.date = sched.next_emailing_day(today).date()
     message: str = recs_to_messages(res, next_day)
-    send_message(message)
+    if send:
+        send_message(message)
+    else:
+        print(message)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -207,6 +210,7 @@ if __name__ == "__main__":
         new_peep = Person(name=args.name, email=args.email)
         new_peep.save(dio_dir)
     elif args.subcommand == "recs":
-        main_recs()
+        print("You should probably use the recs daemon.")
+        main_recs(send=False)
     else:
         raise NotImplementedError("Invalid command")
