@@ -12,7 +12,7 @@ import argparse
 import dataclasses
 import functools
 from abc import ABC
-from typing import Iterator, Dict, Any, IO, List, Optional
+from typing import Iterator, Dict, Set, Any, IO, List, Optional
 
 class DioDir(object):
     """
@@ -110,13 +110,16 @@ class ScheduleABC(ABC):
         raise NotImplementedError()
 
     def next_emailing_day(self, dt: datetime.datetime) -> datetime.datetime:
-        raise NotImplementedError()
+        curr_dt = dt
+        while not self.should_email_day(curr_dt):
+            curr_dt += datetime.timedelta(days=1)
+        return curr_dt
 
     def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
         raise NotImplementedError()
 
 
-class DefaultSchedule(ScheduleABC):
+class ThreeTimesSchedule(ScheduleABC):
     """
     Email everyone over 8 weeks three times a year
     """
@@ -133,19 +136,66 @@ class DefaultSchedule(ScheduleABC):
         return False
     
     def next_emailing_day(self, dt: datetime.datetime) -> datetime.datetime:
-        curr_dt = dt
-        while not self.should_email_day(curr_dt):
-            curr_dt += datetime.timedelta(days=1)
-        return curr_dt
+        return super().next_emailing_day(dt)
 
     def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
-        # 28 Dec is always in last week of year
         _, weeknumber, weekday = dt.isocalendar()
         curr_emailing_week = weeknumber % 8
         curr_bucket = weekday + (weeknumber * 8)
         total_days_per_period = 8 * 7
         person_hash = hash(Person)
         return (person_hash % total_days_per_period) == curr_bucket
+
+class DefaultSchedule(ScheduleABC):
+    """
+    Email everyone in a way that looks super random
+    2x per year for everyone...
+    """
+    def __init__(self):
+        pass
+
+    def should_email_day(self, dt: datetime.datetime) -> bool:
+        # use date, since otherwise the finer increments mess things up wrt stability
+        # so, 28% of days, or about 100 days/year
+        return hash(dt.date()) % 100 <= 28
+    
+    def next_emailing_day(self, dt: datetime.datetime) -> datetime.datetime:
+        return super().next_emailing_day(dt)
+
+    def set_of_days_emailed(self, year:int) -> Set[datetime.date]:
+        first_day_of_year = datetime.datetime(year=year, month=1, day=1).date()
+        res: Set[datetime.date] = set()
+        for day in range(365):
+            curr_day = first_day_of_year + datetime.timedelta(days=day)
+            if self.should_email_day(
+                    datetime.datetime.combine(
+                        curr_day,
+                        datetime.datetime.min.time()
+                    )
+                ):
+                res.add(curr_day)
+        return res
+
+    @staticmethod
+    def before_midyear(dt: datetime.date) -> bool:
+        # midyear's day is july 2
+        return dt < datetime.datetime(year=dt.year, month=7, day=2)
+
+    def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
+        days_emailed: Set[datetime.date] = self.set_of_days_emailed(dt.year)
+        dt_date = dt.date()
+        fst_emailed, snd_emailed =\
+                sorted(list(filter(lambda x: DefaultSchedule.before_midyear(x), days_emailed))),\
+                sorted(list(filter(lambda x: not DefaultSchedule.before_midyear(x), days_emailed)))
+        person_hash = hash(Person)
+        assert dt_date in days_emailed
+        if self.before_midyear(dt_date):
+            total_cardinality = len(fst_emailed)
+            curr_bucket = fst_emailed.index(dt_date)
+        else:
+            total_cardinality = len(snd_emailed)
+            curr_bucket = snd_emailed.index(dt_date)
+        return person_hash % total_cardinality == curr_bucket
 
 def get_recs(dio_dir: DioDir, schedule: ScheduleABC, dt_to_rec: datetime.datetime) -> Optional[List[Person]]:
     if schedule.should_email_day(dt_to_rec):
