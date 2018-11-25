@@ -18,9 +18,33 @@ def dio_dir(draw, dirname=hy_fs.fspaths()):
     return dio.DioDir(dirname=draw(dirname))
 
 @hp.given(person_str())
-def test_person_init(s):
+def test_person_init(peep):
     # assert not null
-    assert s
+    assert peep
+
+def test_person_file_encode_involution(peep):
+    ##############
+    ##############
+    ##############
+    pass
+
+def test_person_folder_encode_involution(peep):
+    ##############
+    ##############
+    ##############
+    pass
+
+def test_is_peep_dir_idempotence(peep):
+    ##############
+    ##############
+    ##############
+    pass
+
+def test_get_all_idempotence(peep):
+    ##############
+    ##############
+    ##############
+    pass
 
 # fs from pyfakefs
 
@@ -32,6 +56,12 @@ def test_filesystem_creation(fs, dio_dir):
     assert os.path.exists(dir_obj.dirname)
     dir_obj.create_if_not_exists()
     assert os.path.exists(dir_obj.dirname)
+
+def test_recs_encoding_involution(recs):
+    ##############
+    ##############
+    ##############
+    pass
 
 if __name__ == "__main__":
     pass
