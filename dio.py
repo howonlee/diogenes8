@@ -14,7 +14,8 @@ from typing import Iterator, Dict, Any, IO, List, Optional
 
 class DioDir(object):
     """
-    eventually, un-hard code dio dir from home
+    Object corresponding to diogenes directory
+    Note the default
     """
     def __init__(self, dirname=None):
         if not dirname:
