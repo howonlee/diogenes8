@@ -67,7 +67,7 @@ class Person(object):
 
     @staticmethod
     def get_filename(dirname: str) -> str:
-        return os.path.join(dirname, ".peep.json")
+        return os.path.join(dirname, "peep.json")
 
     @staticmethod
     def from_file(person_filename: str) -> Person:
@@ -174,6 +174,11 @@ if __name__ == "__main__":
         new_peep = Person(name=args.name, email=args.email)
         new_peep.save(dio_dir)
     elif args.subcommand == "recs":
-        get_recs(dio_dir, sched, today)
+        res: Optional[List[Person]] = get_recs(dio_dir, sched, today)
+        next_day = sched.next_emailing_day(today)
+        if not res:
+            print("Next emailing day is : {}".format(next_day.date()))
+        else:
+            print("\n".join(res))
     else:
         raise NotImplementedError("Invalid command")
