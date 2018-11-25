@@ -6,8 +6,7 @@ import fixtures
 import pytest
 import os
 
-@st.composite
-def person_str(draw, name=st.text(), email=st.text(), salt=st.text()):
+@st.composite def person_str(draw, name=st.text(), email=st.text(), salt=st.text()):
     return dio.Person(
             name=draw(name),
             email=draw(email),
@@ -58,6 +57,18 @@ def test_filesystem_creation(fs, dio_dir):
     assert os.path.exists(dir_obj.dirname)
 
 def test_recs_encoding_involution(recs):
+    ##############
+    ##############
+    ##############
+    pass
+
+def test_add_person_idempotence(peep):
+    ##############
+    ##############
+    ##############
+    pass
+
+def test_get_recs_idempotence():
     ##############
     ##############
     ##############

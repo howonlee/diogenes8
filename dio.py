@@ -144,13 +144,6 @@ def add_person(name: str, email: str) -> None:
         new_peep.to_file(peep_json_file)
     print("added new person: {} with email {}".format(name, email))
 
-def create_dio_dir_if_not_exists(dio_dir:Optional[DioDir] = None) -> None:
-    """ Not threadsafe but otherwise idempotent """
-    dio_dir_name = dio_dir.name
-    dio_dirname = os.path.expanduser("~/.diogenes")
-    if not os.path.exists(dio_dir_name):
-        os.makedirs(dio_dirname)
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("subcommand")
