@@ -13,11 +13,12 @@ def person_str(draw, name=st.text(), email=st.text(), salt=st.text()):
 
 @hp.given(person_str())
 def test_person(s):
+    # assert not null
     assert s
 
-### Person strategy
-### Email strategy
-### Settings strategy
+# fs from pyfakefs
+def test_filesystem_creation(fs):
+    pass
 
 if __name__ == "__main__":
     pass
