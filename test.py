@@ -7,6 +7,8 @@ import pytest
 import pyfakefs
 import os
 
+# fs from pyfakefs
+
 @st.composite
 def person_st(draw, name=st.text(), email=st.text(), salt=st.text()):
     return dio.Person(
@@ -57,8 +59,6 @@ def test_get_all_idempotence(peep):
     ##############
     ##############
     pass
-
-# fs from pyfakefs
 
 @hp.given(dio_dir=dio_dir_st())
 def test_dio_dir_creation_idempotence(fs, dio_dir):

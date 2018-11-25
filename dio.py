@@ -188,13 +188,11 @@ class DefaultSchedule(ScheduleABC):
                 sorted(list(filter(lambda x: DefaultSchedule.before_midyear(x), days_emailed))),\
                 sorted(list(filter(lambda x: not DefaultSchedule.before_midyear(x), days_emailed)))
         person_hash = hash(Person)
+        # assertion getting hit would not be happy
         assert dt_date in days_emailed
-        if self.before_midyear(dt_date):
-            total_cardinality = len(fst_emailed)
-            curr_bucket = fst_emailed.index(dt_date)
-        else:
-            total_cardinality = len(snd_emailed)
-            curr_bucket = snd_emailed.index(dt_date)
+        email_list = fst_emailed if self.before_midyear(dt_date) else snd_emailed
+        total_cardinality = len(email_list)
+        curr_bucket = email_list.index(dt_date)
         return person_hash % total_cardinality == curr_bucket
 
 def get_recs(dio_dir: DioDir, schedule: ScheduleABC, dt_to_rec: datetime.datetime) -> Optional[List[Person]]:
