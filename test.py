@@ -2,6 +2,7 @@ import hypothesis as hp
 import hypothesis.strategies as st
 import hypothesis_fspaths as hy_fs
 import dio
+import datetime
 import pytest
 import pyfakefs
 import os
@@ -79,6 +80,17 @@ def test_schedule_should_contact_idempotence(sched):
     ##############
     ##############
     pass
+
+@hp.given(sched=sched_st())
+def test_schedule_should_have_days_contacted(sched):
+    num_days_contacted = 0
+    for curr_day in range(365):
+        curr_dt = datetime.datetime(2018,1,1) + datetime.timedelta(days=curr_day)
+        if sched.should_email_day(curr_dt):
+            num_days_contacted += 1
+    assert num_days_contacted > 40
+
+        
 
 def test_get_recs_idempotence():
     ##############
