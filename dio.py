@@ -41,21 +41,18 @@ class DioDir(object):
         if not os.path.exists(self.dirname):
             os.makedirs(self.dirname)
 
-
+@dataclasses.dataclass
 class Person(object):
     """
     We want a general data object, really
     """
-    def __init__(self, name: str, salt: Optional[str], **kwargs):
-        #################
-        #################
-        #################
+    def __init__(self, name: str, email: str, salt: Optional[str]):
         self.name = name
+        self.email = email
         if not salt:
             self.salt = str(random.randint(int(1e30), int(9e30)))
         else:
             self.salt = salt
-        self.data = kwargs
 
     def __hash__(self) -> int:
         return hash("{}_{}_{}".format(
