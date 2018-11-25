@@ -23,19 +23,6 @@ class DioDir(object):
             self.dirname = os.path.expanduser("~/.diogenes")
         else:
             self.dirname = str(dirname)
-        self.settings_file = os.path.join(self.dirname, "settings.json")
-
-    def create_settings_if_not_exists(self):
-        default_schema = {
-        }
-        ###########
-        ########### settings should basically have a json schema
-        ###########
-        raise NotImplementedError()
-
-    def get_settings(self):
-        self.create_settings_if_not_exists()
-        pass
 
     def create_if_not_exists(self):
         if not os.path.exists(self.dirname):
