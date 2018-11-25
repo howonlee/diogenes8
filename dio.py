@@ -66,7 +66,22 @@ class Person(object):
         dio_dir.create_if_not_exists()
         dirs = os.listdir(dio_dir.name)
         peep_dirs = filter(Person.is_peep_dir, dirs)
-        return map(Person.from_dir, peep_dirs)
+        return map(Person.from_dir, peep_dirs)a
+
+    @staticmethod
+    def create_person_dir(name: str, email: str, dio_dir: DioDir) -> None:
+        # turn this into a static method on Person...
+        # crude hack to prevent dir traversal
+        peep_dirname = dio_dir.dirname + "/peep_{}".format(os.path.basename(name))
+        if not os.path.exists(peep_dirname):
+            os.makedirs(peep_dirname)
+        new_peep = Person(name, email)
+        peep_json_filename = os.path.join(peep_dirname, "peep.json")
+        with open(peep_json_filename, "w") as peep_json_file:
+            new_peep.to_file(peep_json_file)
+        print("added new person: {} with email {}".format(name, email))
+
+    ######### should do a remove_person_dir
 
 
 @dataclasses.dataclass
@@ -128,18 +143,6 @@ def get_recs(schedule: ScheduleABC, dt_to_rec: datetime.datetime) -> Optional[Re
     else:
         return None
 
-def add_person(name: str, email: str) -> None:
-    # crude hack to prevent dir traversal
-    peep_dirname = os.path.expanduser(
-            "~/.diogenes/peep_{}".format(os.path.basename(name))
-            )
-    if not os.path.exists(peep_dirname):
-        os.makedirs(peep_dirname)
-    new_peep = Person(name, email)
-    peep_json_filename = os.path.join(peep_dirname, "peep.json")
-    with open(peep_json_filename, "w") as peep_json_file:
-        new_peep.to_file(peep_json_file)
-    print("added new person: {} with email {}".format(name, email))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -154,7 +157,7 @@ if __name__ == "__main__":
             raise IOError("Needs a name")
         if not args.email:
             raise IOError("Needs an email")
-        add_person(args.name, args.email)
+        Person.create_person_dir(args.name, args.email, dio_dir)
     elif args.subcommand == "recs":
         get_recs()
     else:
