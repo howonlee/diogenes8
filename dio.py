@@ -45,7 +45,7 @@ class Person(object):
 
     def get_dir(self, dio_dir: DioDir) -> str:
         return dio_dir.dirname +\
-                "/peep_{}".format(os.path.basename(peep.name))
+                "/peep_{}".format(os.path.basename(self.name))
 
     @staticmethod
     def get_filename(dirname: str) -> str:
