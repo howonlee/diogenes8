@@ -48,8 +48,7 @@ def test_get_all_idempotence(peep):
 # fs from pyfakefs
 
 @hp.given(dio_dir=dio_dir())
-def test_filesystem_creation(fs, dio_dir):
-    """ tests idempotence of fs creation """
+def test_dio_dir_creation_idempotence(fs, dio_dir):
     dir_obj = dio.DioDir(dirname=dio_dir)
     dir_obj.create_if_not_exists()
     assert os.path.exists(dir_obj.dirname)
