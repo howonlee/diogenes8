@@ -155,6 +155,21 @@ def get_recs(dio_dir: DioDir, schedule: ScheduleABC, dt_to_rec: datetime.datetim
     else:
         return None
 
+def send_recs(res: Optional[List[Person]], next_day: datetime.date):
+    if not res:
+        print("Next emailing day is : {}".format(next_day))
+    else:
+        print("\n".join(res))
+    pass
+
+def main_recs():
+    dio_dir = DioDir()
+    dio_dir.create_if_not_exists()
+    sched = DefaultSchedule()
+    today = datetime.datetime.now()
+    res: Optional[List[Person]] = get_recs(dio_dir, sched, today)
+    next_day: datetime.date = sched.next_emailing_day(today).date()
+    send_recs(res, next_day)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -162,23 +177,16 @@ if __name__ == "__main__":
     parser.add_argument("--name")
     parser.add_argument("--email")
     args = parser.parse_args()
-    dio_dir = DioDir()
-    dio_dir.create_if_not_exists()
-    today = datetime.datetime.now()
-    sched = DefaultSchedule()
     if args.subcommand == "add":
         if not args.name:
             raise IOError("Needs a name")
         if not args.email:
             raise IOError("Needs an email")
+        dio_dir = DioDir()
+        dio_dir.create_if_not_exists()
         new_peep = Person(name=args.name, email=args.email)
         new_peep.save(dio_dir)
     elif args.subcommand == "recs":
-        res: Optional[List[Person]] = get_recs(dio_dir, sched, today)
-        next_day = sched.next_emailing_day(today)
-        if not res:
-            print("Next emailing day is : {}".format(next_day.date()))
-        else:
-            print("\n".join(res))
+        main_recs()
     else:
         raise NotImplementedError("Invalid command")

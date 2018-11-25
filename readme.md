@@ -1,4 +1,4 @@
 Diogenes mark 8
 ===
 
-Lol
+Set email url, password with envvars
