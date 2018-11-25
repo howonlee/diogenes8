@@ -112,25 +112,29 @@ class ScheduleABC(ABC):
 
 
 class DefaultSchedule(ScheduleABC):
+    """
+    Email everyone over 8 weeks three times a year
+    """
     def __init__(self):
         pass
 
     def should_email_day(self, dt: datetime.datetime) -> bool:
-        # isocalendar has Monday 1 and Sunday 7
-        # we want every 2nd Saturday
         _, weeknumber, weekday = dt.isocalendar()
-        if weeknumber % 2 == 0 and weekday == 6:
+        emailing_weeks = set(range(1, 9)) +\
+                set(range(18,26)) +\
+                set(range(35,43))
+        if weeknumber in emailing_weeks:
             return True
         return False
 
     def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
         # 28 Dec is always in last week of year
-        num_weeks_in_year = datetime.date(dt.year, 12, 28)\
-                .isocalendar()[1]
         _, weeknumber, weekday = dt.isocalendar()
+        curr_emailing_week = weeknumber % 8
+        curr_bucket = weekday + (weeknumber * 8)
+        total_days_per_period = 8 * 7
         person_hash = hash(Person)
-        rounded_weeknumber = int(math.ceil(weeknumber / 2.) * 2)
-        return (person_hash % num_weeks_in_year) == rounded_weeknumber
+        return (person_hash % total_days_per_period) == curr_bucket
 
 def get_recs(dio_dir: DioDir, schedule: ScheduleABC, dt_to_rec: datetime.datetime) -> Optional[List[Person]]:
     if schedule.should_email_day(dt_to_rec):
@@ -147,6 +151,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("subcommand")
     parser.add_argument("--name")
+    parser.add_argument("--email")
     args = parser.parse_args()
     dio_dir = DioDir()
     dio_dir.create_if_not_exists()
