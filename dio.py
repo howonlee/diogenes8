@@ -15,7 +15,16 @@ class DioDir(object):
     """
     eventually, un-hard code dio dir from home
     """
-    pass
+    def __init__(self, dirname=None):
+        if not dirname:
+            self.dirname = os.path.expanduser("~/.diogenes")
+        else:
+            self.dirname = str(dirname)
+
+    def create_if_not_exists(self):
+        if not os.path.exists(self.dirname):
+            os.makedirs(self.dirname)
+
 
 @dataclasses.dataclass
 class Person(object):
@@ -53,10 +62,9 @@ class Person(object):
             return False
 
     @staticmethod
-    def get_all() -> Iterator[Person]:
-        create_dio_dir_if_not_exists()
-        dio_dir = os.path.expanduser("~/.diogenes")
-        dirs = os.listdir(dio_dir)
+    def get_all(dio_dir: DioDir) -> Iterator[Person]:
+        dio_dir.create_if_not_exists()
+        dirs = os.listdir(dio_dir.name)
         peep_dirs = filter(Person.is_peep_dir, dirs)
         return map(Person.from_dir, peep_dirs)
 
@@ -136,10 +144,11 @@ def add_person(name: str, email: str) -> None:
         new_peep.to_file(peep_json_file)
     print("added new person: {} with email {}".format(name, email))
 
-def create_dio_dir_if_not_exists() -> None:
+def create_dio_dir_if_not_exists(dio_dir:Optional[DioDir] = None) -> None:
     """ Not threadsafe but otherwise idempotent """
+    dio_dir_name = dio_dir.name
     dio_dirname = os.path.expanduser("~/.diogenes")
-    if not os.path.exists(dio_dirname):
+    if not os.path.exists(dio_dir_name):
         os.makedirs(dio_dirname)
 
 if __name__ == "__main__":
@@ -148,7 +157,8 @@ if __name__ == "__main__":
     parser.add_argument("--name")
     parser.add_argument("--email")
     args = parser.parse_args()
-    create_dio_dir_if_not_exists()
+    dio_dir = DioDir()
+    dio_dir.create_if_not_exists()
     if args.subcommand == "add":
         if not args.name:
             raise IOError("Needs a name")
