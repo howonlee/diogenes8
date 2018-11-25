@@ -5,7 +5,6 @@ import shutil
 import json
 import random
 import math
-import marshmallow
 import datetime
 import argparse
 import dataclasses
@@ -123,8 +122,8 @@ class DefaultSchedule(ScheduleABC):
 
     def should_email_day(self, dt: datetime.datetime) -> bool:
         _, weeknumber, weekday = dt.isocalendar()
-        emailing_weeks = set(range(1, 9)) +\
-                set(range(18,26)) +\
+        emailing_weeks = set(range(1, 9)) |\
+                set(range(18,26)) |\
                 set(range(35,43))
         if weeknumber in emailing_weeks:
             return True
@@ -133,7 +132,7 @@ class DefaultSchedule(ScheduleABC):
     def next_emailing_day(self, dt: datetime.datetime):
         curr_dt = dt
         while not self.should_email_day(curr_dt):
-            curr_dt += datetime.timedelta(day=1)
+            curr_dt += datetime.timedelta(days=1)
         return curr_dt
 
     def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
