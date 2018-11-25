@@ -21,10 +21,6 @@ def dio_dir_st(draw, dirname=hy_fs.fspaths()):
 def sched_st(draw):
     return dio.DefaultSchedule()
 
-@st.composite
-def recs_st(draw):
-    return dio.Recs(people=st.lists(person_st()))
-
 @hp.given(peep=person_st())
 def test_person_init(peep):
     # assert not null
@@ -69,13 +65,6 @@ def test_dio_dir_creation_idempotence(fs, dio_dir):
     assert os.path.exists(dio_dir.dirname)
     dio_dir.create_if_not_exists()
     assert os.path.exists(dio_dir.dirname)
-
-@hp.given(recs=recs_st())
-def test_recs_encoding_involution(recs):
-    ##############
-    ##############
-    ##############
-    pass
 
 @hp.given(sched=sched_st())
 def test_schedule_should_email_day_idempotence(sched):

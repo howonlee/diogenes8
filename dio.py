@@ -5,6 +5,7 @@ import shutil
 import json
 import random
 import math
+import marshmallow
 import datetime
 import argparse
 import dataclasses
@@ -22,17 +23,39 @@ class DioDir(object):
             self.dirname = os.path.expanduser("~/.diogenes")
         else:
             self.dirname = str(dirname)
+        self.settings_file = os.path.join(self.dirname, "settings.json")
+
+    def create_settings_if_not_exists(self):
+        default_schema = {
+        }
+        ###########
+        ########### settings should basically have a json schema
+        ###########
+        raise NotImplementedError()
+
+    def get_settings(self):
+        self.create_settings_if_not_exists()
+        pass
 
     def create_if_not_exists(self):
         if not os.path.exists(self.dirname):
             os.makedirs(self.dirname)
 
 
-@dataclasses.dataclass
 class Person(object):
-    name: str
-    email: str
-    salt: str = str(random.randint(int(1e30), int(9e30)))
+    """
+    We want a general data object, really
+    """
+    def __init__(self, name: str, salt: Optional[str], **kwargs):
+        #################
+        #################
+        #################
+        self.name = name
+        if not salt:
+            self.salt = str(random.randint(int(1e30), int(9e30)))
+        else:
+            self.salt = salt
+        self.data = kwargs
 
     def __hash__(self) -> int:
         return hash("{}_{}_{}".format(
@@ -93,21 +116,6 @@ class Person(object):
         return map(Person.from_dir, peep_dirs)
 
 
-@dataclasses.dataclass
-class Recs(object):
-    people: List[Person]
-
-    def to_file(self, recs_filename: str) -> None:
-        with open(recs_filename, "w") as recs_file:
-            json.dump(dataclasses.asdict(self), recs_file)
-
-    @staticmethod
-    def from_file(recs_filename: str) -> Recs:
-        with open(recs_filename, "r") as recs_file:
-            json_res: Dict[str, Any] = json.load(recs_file)
-            return Recs(**json_res)
-
-
 class ScheduleABC(ABC):
     def __init__(self):
         pass
@@ -144,13 +152,13 @@ class DefaultSchedule(ScheduleABC):
         rounded_weeknumber = int(math.ceil(weeknumber / 2.) * 2)
         return (person_hash % num_weeks_in_year) == rounded_weeknumber
 
-def get_recs(dio_dir: DioDir, schedule: ScheduleABC, dt_to_rec: datetime.datetime) -> Optional[Recs]:
+def get_recs(dio_dir: DioDir, schedule: ScheduleABC, dt_to_rec: datetime.datetime) -> Optional[List[Person]]:
     if schedule.should_email_day(dt_to_rec):
         should_contact_on_day = functools.partial(
             schedule.should_contact,
             dt=dt_to_rec
         )
-        return Recs(list(filter(should_contact_on_day, Person.get_all(dio_dir))))
+        return list(filter(should_contact_on_day, Person.get_all(dio_dir)))
     else:
         return None
 
@@ -159,7 +167,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("subcommand")
     parser.add_argument("--name")
-    parser.add_argument("--email")
     args = parser.parse_args()
     dio_dir = DioDir()
     dio_dir.create_if_not_exists()
@@ -170,7 +177,7 @@ if __name__ == "__main__":
             raise IOError("Needs a name")
         if not args.email:
             raise IOError("Needs an email")
-        new_peep = Person(name=args.name, email=args.email)
+        new_peep = Person(name=args.name)
         new_peep.create(dio_dir)
     elif args.subcommand == "recs":
         get_recs(dio_dir, sched, today)
