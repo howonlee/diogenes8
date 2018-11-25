@@ -1,6 +1,7 @@
 from __future__ import annotations
 import calendar
 import os
+import shutil
 import json
 import random
 import math
@@ -41,6 +42,14 @@ class Person(object):
     def to_file(self, person_file: IO[str]) -> None:
         json.dump(dataclasses.asdict(self), person_file)
 
+    def get_dir(self, dio_dir: DioDir) -> str:
+        return dio_dir.dirname +\
+                "/peep_{}".format(os.path.basename(peep.name))
+
+    @staticmethod
+    def get_filename(dirname: str) -> str:
+        return os.path.join(dirname, ".peep.json")
+
     @staticmethod
     def from_file(person_file: IO[str]) -> Person:
         json_res: Dict[str, Any] = json.load(person_file)
@@ -48,7 +57,7 @@ class Person(object):
 
     @staticmethod
     def from_dir(person_dir: str) -> Person:
-        person_filepath = os.path.join(person_dir, ".peep.json")
+        person_filepath = Person.get_filename(person_dir)
         with open(person_filepath, "r") as person_file:
             res = Person.from_file(person_file)
         return res
@@ -69,19 +78,21 @@ class Person(object):
         return map(Person.from_dir, peep_dirs)
 
     @staticmethod
-    def create_person_dir(name: str, email: str, dio_dir: DioDir) -> None:
-        # turn this into a static method on Person...
-        # crude hack to prevent dir traversal
-        peep_dirname = dio_dir.dirname + "/peep_{}".format(os.path.basename(name))
+    def create_person(new_peep: Person, dio_dir: DioDir) -> None:
+        peep_dirname = new_peep.get_dir(dio_dir)
         if not os.path.exists(peep_dirname):
             os.makedirs(peep_dirname)
-        new_peep = Person(name, email)
-        peep_json_filename = os.path.join(peep_dirname, "peep.json")
+        peep_json_filename = Person.get_filename(peep_dirname)
         with open(peep_json_filename, "w") as peep_json_file:
             new_peep.to_file(peep_json_file)
-        print("added new person: {} with email {}".format(name, email))
 
-    ######### should do a remove_person_dir
+    @staticmethod
+    def remove_person(peep: Person, dio_dir: DioDir) -> None:
+        peep_dirname = peep.get_dir(dio_dir)
+        if not os.path.exists(peep_dirname):
+            raise Exception("Peep directory does not exist to remove")
+        else:
+            shutil.rmdir(peep_dirname)
 
 
 @dataclasses.dataclass

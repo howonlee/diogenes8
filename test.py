@@ -107,5 +107,19 @@ def test_add_person_associativity(peep):
     ##############
     pass
 
+@hp.given(peep=person_str())
+def test_remove_person_idempotence(peep):
+    ##############
+    ##############
+    ##############
+    pass
+
+@hp.given(peep=person_str())
+def test_peep_state_machine(peep):
+    ##############
+    ##############
+    ##############
+    pass
+
 if __name__ == "__main__":
     pass
