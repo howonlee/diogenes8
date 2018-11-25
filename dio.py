@@ -9,7 +9,7 @@ import argparse
 import dataclasses
 import functools
 from abc import ABC
-from typing import Iterator, Dict, Any, IO, List
+from typing import Iterator, Dict, Any, IO, List, Optional
 
 class DioDir(object):
     """
@@ -96,6 +96,7 @@ class ScheduleABC(ABC):
     def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
         raise NotImplementedError()
 
+
 class DefaultSchedule(ScheduleABC):
     def __init__(self):
         pass
@@ -117,19 +118,15 @@ class DefaultSchedule(ScheduleABC):
         rounded_weeknumber = int(math.ceil(weeknumber / 2.) * 2)
         return (person_hash % num_weeks_in_year) == rounded_weeknumber
 
-def get_recs() -> None:
-    curr_schedule = DefaultSchedule()
-    if curr_schedule.should_email_day(datetime.datetime.today()):
-        should_contact_today = functools.partial(
-            curr_schedule.should_contact,
-            dt=datetime.datetime.today()
+def get_recs(schedule: ScheduleABC, dt_to_rec: datetime.datetime) -> Optional[Recs]:
+    if schedule.should_email_day(dt_to_rec)
+        should_contact_on_day = functools.partial(
+            schedule.should_contact,
+            dt=dt_to_rec
         )
-        people = Recs(list(filter(should_contact_today, Person.get_all())))
-        print(people)
-        print("got recs")
+        return Recs(list(filter(should_contact_on_day, Person.get_all())))
     else:
-        print("no recs today")
-        pass
+        return None
 
 def add_person(name: str, email: str) -> None:
     # crude hack to prevent dir traversal
