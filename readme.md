@@ -38,7 +38,7 @@ Adds a new person to diogenes. This ends up being a folder in `~/.diogenes` and 
 dio.py batchadd --batchfile <file name>
 ```
 
-Adds peeps batchwise. --batchfile takes a csv with fields `name` and `email` _only_.
+Adds peeps batchwise. --batchfile takes a csv with fields `name` and `email` _only_. This ends up being a bunch of folders in `~/.diogenes` and a bunch of little peep.json files. The rest of the folders are yours to futz around with. Addition is silently not strictly idempotent, because it replaces the person in the hash, I'm vacillating on whether that's good behavior.
 
 ```
 dio.py recs

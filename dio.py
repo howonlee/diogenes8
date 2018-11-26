@@ -274,6 +274,8 @@ if __name__ == "__main__":
     elif args.subcommand == "batchadd":
         if not args.batchfile:
             raise IOError("Needs a batch file")
+        if not args.batchfile.endswith("csv"):
+            raise IOError("Needs a csv file")
         dio_dir = DioDir()
         dio_dir.create_if_not_exists()
         with open(args.batchfile, "r") as batch_file:
