@@ -12,7 +12,7 @@ import argparse
 import dataclasses
 import functools
 from abc import ABC
-from typing import Iterator, Dict, Set, Any, IO, List, Optional
+from typing import Dict, Set, Any, IO, List, Optional
 
 class DioDir(object):
     """
@@ -94,11 +94,11 @@ class Person(object):
             return False
     
     @staticmethod
-    def get_all(dio_dir: DioDir) -> Iterator[Person]:
+    def get_all(dio_dir: DioDir) -> List[Person]:
         dio_dir.create_if_not_exists()
         dirs = os.listdir(dio_dir.dirname)
         peep_dirs = filter(Person.is_peep_dir, dirs)
-        return map(Person.from_dir, peep_dirs)
+        return list(map(Person.from_dir, peep_dirs))
 
 
 class ScheduleABC(ABC):

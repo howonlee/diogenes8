@@ -55,12 +55,12 @@ def test_is_peep_dir_idempotence(fs, peep, dio_dir, dirname):
     fth_res = dio.Person.is_peep_dir(peep.get_dir(dio_dir))
     assert thd_res == fth_res
 
-@hp.given(peep=person_st())
-def test_get_all_idempotence(peep):
-    ##############
-    ##############
-    ##############
-    pass
+@hp.given(peep=person_st(), dio_dir=dio_dir_st())
+def test_get_all_idempotence(fs, peep, dio_dir):
+    peep.save(dio_dir)
+    fst_res = dio.Person.get_all(dio_dir)
+    snd_res = dio.Person.get_all(dio_dir)
+    assert fst_res == snd_res
 
 @hp.given(dio_dir=dio_dir_st())
 def test_dio_dir_creation_idempotence(fs, dio_dir):
