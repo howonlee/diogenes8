@@ -113,6 +113,9 @@ class ScheduleABC(ABC):
         raise NotImplementedError()
 
     def next_emailing_day(self, dt: datetime.datetime) -> datetime.datetime:
+        """
+        Will shortcircuit if we are currently doing emailing day that day
+        """
         curr_dt = dt
         while not self.should_email_day(curr_dt):
             curr_dt += datetime.timedelta(days=1)
@@ -182,14 +185,17 @@ class DefaultSchedule(ScheduleABC):
     @staticmethod
     def before_midyear(dt: datetime.date) -> bool:
         # midyear's day is july 2
-        return dt < datetime.datetime(year=dt.year, month=7, day=2)
+        return dt < datetime.date(year=dt.year, month=7, day=2)
+
+    @staticmethod
+    def split_emailed_set(set_of_days: Set[datetime.date]) -> Tuple[Set[datetime.date], Set[datetime.date]]:
+        return (sorted(list(filter(lambda x: DefaultSchedule.before_midyear(x), set_of_days))),
+                sorted(list(filter(lambda x: not DefaultSchedule.before_midyear(x), set_of_days))))
 
     def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
         days_emailed: Set[datetime.date] = self.set_of_days_emailed(dt.year)
         dt_date = dt.date()
-        fst_emailed, snd_emailed =\
-                sorted(list(filter(lambda x: DefaultSchedule.before_midyear(x), days_emailed))),\
-                sorted(list(filter(lambda x: not DefaultSchedule.before_midyear(x), days_emailed)))
+        fst_emailed, snd_emailed = DefaultSchedule.split_emailed_set(days_emailed)
         person_hash = hash(Person)
         # assertion getting hit would not be happy
         assert dt_date in days_emailed
