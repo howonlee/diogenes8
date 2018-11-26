@@ -226,8 +226,8 @@ def recs_to_message(res: Optional[List[Person]], next_day: datetime.date) -> str
 
 def send_message(contents: str) -> None:
     today: datetime.date = datetime.datetime.now().date()
-    smtp_url: str = os.environ["DIO_SMTP_URL"]
-    smtp_port: int = int(os.environ["DIO_SMTP_PORT"])
+    smtp_url: str = os.getenv("DIO_SMTP_URL", "smtp.gmail.com")
+    smtp_port: int = int(os.getenv("DIO_SMTP_PORT", "587"))
     smtp_username: str = os.environ["DIO_SMTP_USERNAME"]
     smtp_password: str = os.environ["DIO_SMTP_PASSWORD"]
     smtp_dest_email: str = os.environ["DIO_DEST_EMAIL"]
