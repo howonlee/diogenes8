@@ -93,13 +93,12 @@ def test_schedule_next_day_should_be_after_day(sched, dt):
 
 @hp.given(sched=sched_st(), dt=st.datetimes())
 def test_fst_email_comparable_to_snd_email(sched, dt):
+    """ imbalance should be ~ Gaussian, so this is just verifying thin-tailedness """
     days_to_schedule = sched.set_of_days_emailed(dt.year)
     fst, snd = dio.DefaultSchedule.split_emailed_set(days_to_schedule)
     assert abs(len(fst) - len(snd)) < 40
 
-@hp.given(peep=person_st(),
-          dio_dir=dio_dir_st(),
-          sched=sched_st())
+@hp.given(peep=person_st(), dio_dir=dio_dir_st(), sched=sched_st())
 def test_person_contacted_exactly_twice_a_year(fs, peep, dio_dir, sched):
     peep.save(dio_dir)
     first_day = datetime.datetime(2018, 1, 1)
@@ -119,12 +118,6 @@ def test_schedule_should_have_days_contacted(sched):
         if sched.should_email_day(curr_dt):
             num_days_contacted += 1
     assert num_days_contacted > 40
-
-def test_get_recs_idempotence():
-    ##############
-    ##############
-    ##############
-    pass
 
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
 def test_add_person_idempotence(fs, peep, dio_dir):
@@ -146,6 +139,12 @@ def test_remove_person_idempotence(fs, peep, dio_dir):
 
 @hp.given(peep=person_st())
 def test_add_person_associativity(peep):
+    ##############
+    ##############
+    ##############
+    pass
+
+def test_get_recs_idempotence():
     ##############
     ##############
     ##############
