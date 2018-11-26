@@ -84,6 +84,26 @@ def test_schedule_should_contact_idempotence(sched):
     pass
 
 @hp.given(sched=sched_st())
+def test_schedule_next_day_should_be_after_day(sched, dt):
+    ##############
+    ##############
+    ##############
+    pass
+
+@hp.given(sched=sched_st())
+def fst_emailed_should_be_similar_in_cardinality_to_snd_emailed(sched, dt):
+    ##############
+    ##############
+    ##############
+    pass
+
+def person_only_contacted_twice_a_year(sched, dt, peep):
+    ##############
+    ##############
+    ##############
+    pass
+
+@hp.given(sched=sched_st())
 def test_schedule_should_have_days_contacted(sched):
     num_days_contacted = 0
     for curr_day in range(365):
@@ -91,8 +111,6 @@ def test_schedule_should_have_days_contacted(sched):
         if sched.should_email_day(curr_dt):
             num_days_contacted += 1
     assert num_days_contacted > 40
-
-        
 
 def test_get_recs_idempotence():
     ##############
