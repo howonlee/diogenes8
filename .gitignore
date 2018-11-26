@@ -3,3 +3,6 @@ peep_*
 __pycache__
 .mypy_cache/
 .hypothesis/
+
+# don't check in my own list of friends lol
+*.csv
