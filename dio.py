@@ -85,6 +85,9 @@ class Person(object):
     @staticmethod
     def is_peep_dir(dir_to_check: str) -> bool:
         parent_dir, filename = os.path.split(dir_to_check)
+        if isinstance(filename, (bytes, bytearray)):
+            filename = filename.decode(errors='replace')
+
         if filename.startswith("peep_"):
             return os.path.isdir(dir_to_check)
         else:

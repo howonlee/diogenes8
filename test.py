@@ -46,12 +46,14 @@ def test_person_folder_encode_involution(fs, peep, dio_dir):
     new_peep = dio.Person.from_dir(dirname)
     assert peep == new_peep
 
-@hp.given(peep=person_st())
-def test_is_peep_dir_idempotence(peep):
-    ##############
-    ##############
-    ##############
-    pass
+@hp.given(peep=person_st(), dio_dir=dio_dir_st(), dirname=hy_fs.fspaths())
+def test_is_peep_dir_idempotence(fs, peep, dio_dir, dirname):
+    fst_res = dio.Person.is_peep_dir(dirname)
+    snd_res = dio.Person.is_peep_dir(dirname)
+    assert fst_res == snd_res
+    thd_res = dio.Person.is_peep_dir(peep.get_dir(dio_dir))
+    fth_res = dio.Person.is_peep_dir(peep.get_dir(dio_dir))
+    assert thd_res == fth_res
 
 @hp.given(peep=person_st())
 def test_get_all_idempotence(peep):
