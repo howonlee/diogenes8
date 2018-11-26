@@ -29,7 +29,7 @@ Usage
 ---
 On first usage, creates a `~/.diogenes` directory in home dir. Only a few subcommands right now. The person data only goes into a little `peep.json` file inside of a folder in `~/.diogenes` corresponding to the person. So if you need to do actual CRM things and take notes or something, there's a ... folder. Just shove it in there. Any files you'd like.
 
-What I use for daemonization is supervisord. Cat the conf file to /etc/supervisor/conf.d/recommenderd.conf
+What I use for daemonization is supervisord. Conf file included is a valid jinja2 template. Fill the members of template out and cat the conf file to /etc/supervisor/conf.d/recommenderd.conf
 
 ```
 dio.py add --name <name> --email <email>
