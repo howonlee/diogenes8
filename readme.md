@@ -46,12 +46,19 @@ Notes
 Default schedule is to contact everyone 2x a year, reminding on an unpredictable but nonrandom (hash-based) schedule of days. There's a little ABC for creating your own schedule if you want.
 
 Diogenes mark 1 was some paper
+
 mark 2 was a web app (that I took down, because it was getting annoying)
+
 mark 3 was a spreadsheet
+
 mark 4 was a local postgres DB
+
 mark 5 was a static site with JS that I took down
+
 mark 6 was some paper
+
 mark 7 was a SQLite local crud command line app, threw that away
+
 You're looking at mark 8, the filesystem local crud command line app that I messed with envvars a bit and de-hardcoded a lot of stuff so I could publish
 
 Motivation is Granovetter's observation that weak links are most important, "The Strength of Weak Ties". But I believe the data better fits a renormalization group sort of picture of the actual use of weak ties. To the best of my knowledge, SOTA of community modelling is basically this sort of renormalization group flow picture (Kronecker graph, tensor methods), although it is pretty seldom that folks actually say renormalization group flow (Watts and Strogatz do, if I recall correctly, but I can't find a cite). Friends are a fractal phenomenon!
