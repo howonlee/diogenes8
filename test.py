@@ -129,7 +129,7 @@ def test_add_person_idempotence(fs, peep, dio_dir):
     assert peep == new_peep
 
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
-def test_remove_person_idempotence(fs, peep, dio_dir):
+def test_remove_person_non_idempotence(fs, peep, dio_dir):
     dio_dir.create_if_not_exists()
     peep.save(dio_dir)
     peep.delete(dio_dir)
@@ -137,18 +137,12 @@ def test_remove_person_idempotence(fs, peep, dio_dir):
         peep.delete(dio_dir)
         assert "delete" in str(exc.value)
 
-def test_get_recs_idempotence():
-    ##############
-    ##############
-    ##############
-    pass
-
 @hp.given(peep=person_st())
 def test_peep_state_machine(peep):
     ##############
-    ##############
+    ############## crud
     ##############
     pass
 
 if __name__ == "__main__":
-    pass
+    raise Exception("use pytest")

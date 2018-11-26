@@ -215,8 +215,10 @@ def get_recs(dio_dir: DioDir, schedule: ScheduleABC, dt_to_rec: datetime.datetim
         return None
 
 def recs_to_message(res: Optional[List[Person]], next_day: datetime.date) -> str:
-    if not res:
+    if res is None:
         return "Next emailing day is : {}".format(next_day)
+    elif res == []:
+        return "Emailing day, but no peeps today. Add more peeps."
     else:
         return "\n".join(
             ["\t".join([peep.name, peep.email]) for peep in res]
