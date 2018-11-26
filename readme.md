@@ -40,6 +40,11 @@ dio.py recs
 
 Manually give the recommendations for today, without emailing. Will give you the contents of what the daemon will email you, but just use the daemon.
 
+Importing friends
+---
+
+I seriously recommend using pen and paper and taking an afternoon to go over your contacts list, because at this point 4/5 your "friends" on Facebook are probably not actually going to be friends to a degree that you will actually be able to contact them.
+
 Notes
 ---
 
@@ -64,4 +69,3 @@ You're looking at mark 8, the filesystem local crud command line app that I mess
 Motivation is Granovetter's observation that weak links are most important, "The Strength of Weak Ties". But I believe the data better fits a renormalization group sort of picture of the actual use of weak ties. To the best of my knowledge, SOTA of community modelling is basically this sort of renormalization group flow picture (Kronecker graph, tensor methods), although it is pretty seldom that folks actually say renormalization group flow (Watts and Strogatz do, if I recall correctly, but I can't find a cite). Friends are a fractal phenomenon!
 
 It remains an old contention of mine that many of the two-factor things that happen a lot in psychology are sort of doing a PCA on a fractal space and popping out the first two factors and calling it a day. But given that, you need to actually respect the illusion of a two-factor thing going on and don't put anyone in that you contact out of your own volition all the time. Weak links, basically.
-
