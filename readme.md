@@ -1,7 +1,7 @@
 Diogenes Mark 8
 ===
 
-Diogenes is an intensely personalized command line only CRM for friends. Personalized only to me, Howon Lee.
+Diogenes is an intensely personalized command line only CRM for friends. Personalized only to me, Howon Lee. Literally down to using my favorite way to refer to peeps in the plural, `peeps`.
 
 Installing and Setup
 ---
@@ -26,13 +26,19 @@ What I use for daemonization is supervisord. Cat the conf file to /etc/superviso
 
 Usage
 ---
-On first usage, creates a `~/.diogenes` directory in home dir. Two subcommands only right now,
+On first usage, creates a `~/.diogenes` directory in home dir. Only a few subcommands right now.
 
 ```
 dio.py add --name <name> --email <email>
 ```
 
-Adds a new person to diogenes. This ends up being a folder in `~/.diogenes` and a little peep.json file. The rest of the folder is yours to futz around with.
+Adds a new person to diogenes. This ends up being a folder in `~/.diogenes` and a little peep.json file. The rest of the folder is yours to futz around with. Addition is silently not strictly idempotent, because it replaces the person in the hash, I'm vacillating on whether that's good behavior.
+
+```
+dio.py batchadd --batchfile <file name>
+```
+
+Adds peeps batchwise. --batchfile takes a csv with fields `name` and `email` _only_.
 
 ```
 dio.py recs

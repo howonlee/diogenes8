@@ -260,6 +260,7 @@ if __name__ == "__main__":
     parser.add_argument("subcommand")
     parser.add_argument("--name")
     parser.add_argument("--email")
+    parser.add_argument("--batchfile")
     args = parser.parse_args()
     if args.subcommand == "add":
         if not args.name:
@@ -270,6 +271,16 @@ if __name__ == "__main__":
         dio_dir.create_if_not_exists()
         new_peep = Person(name=args.name, email=args.email)
         new_peep.save(dio_dir)
+    elif args.subcommand == "batchadd":
+        if not args.batchfile:
+            raise IOError("Needs a batch file")
+        dio_dir = DioDir()
+        dio_dir.create_if_not_exists()
+        with open(args.batchfile, "r") as batch_file:
+            reader = csv.DictReader(batch_files, fields=["name", "email"])
+            for row in reader:
+                new_peep = Person(name=row["name"], email=row["email"])
+                new_peep.save(dio-dir)
     elif args.subcommand == "recs":
         print("You should probably use the recs daemon.")
         main_recs(send=False)
