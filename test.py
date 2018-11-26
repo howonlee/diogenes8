@@ -137,13 +137,6 @@ def test_remove_person_idempotence(fs, peep, dio_dir):
         peep.delete(dio_dir)
         assert "delete" in str(exc.value)
 
-@hp.given(peep=person_st())
-def test_add_person_associativity(peep):
-    ##############
-    ##############
-    ##############
-    pass
-
 def test_get_recs_idempotence():
     ##############
     ##############
