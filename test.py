@@ -137,12 +137,5 @@ def test_remove_person_non_idempotence(fs, peep, dio_dir):
         peep.delete(dio_dir)
         assert "delete" in str(exc.value)
 
-@hp.given(peep=person_st())
-def test_peep_state_machine(peep):
-    ##############
-    ############## crud
-    ##############
-    pass
-
 if __name__ == "__main__":
     raise Exception("use pytest")
