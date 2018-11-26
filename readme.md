@@ -1,4 +1,4 @@
-Diogenes mark 8
+Diogenes Mark 8
 ===
 
 Diogenes is an intensely personalized command line only CRM for friends. Personalized only to me, Howon Lee.
@@ -35,4 +35,6 @@ You're looking at mark 8, the filesystem local crud command line app that I mess
 
 Motivation is Granovetter's observation that weak links are most important, "The Strength of Weak Ties". But I believe the data better fits a renormalization group sort of picture of the actual use of weak ties. To the best of my knowledge, SOTA of community modelling is basically this sort of renormalization group flow picture (Kronecker graph, tensor methods), although it is pretty seldom that folks actually say renormalization group flow (Watts and Strogatz do, if I recall correctly, but I can't find a cite).
 
-It remains an old contention of mine that many of the two-factor things that happen a lot in psychology are sort of doing a PCA on a fractal space and popping out the first two factors and calling it a day. But given that, you need to actually respect the illusion of a two-factor thing going on and don't put anyone in that you contact out of your own volition all the time.
+It remains an old contention of mine that many of the two-factor things that happen a lot in psychology are sort of doing a PCA on a fractal space and popping out the first two factors and calling it a day. But given that, you need to actually respect the illusion of a two-factor thing going on and don't put anyone in that you contact out of your own volition all the time. Weak links, basically.
+
+Default schedule is to contact everyone 2x a year, reminding on an unpredictable but nonrandom (hash-based) schedule of days.
