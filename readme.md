@@ -22,7 +22,28 @@ DIO_DEST_EMAIL
 
 Use an app password for the `DIO_SMTP_PASSWORD`
 
-What I use for daemonization is supervisord. Cat the conf file to /etc/supervisor/conf.d/diod.conf
+What I use for daemonization is supervisord. Cat the conf file to /etc/supervisor/conf.d/recommenderd.conf
+
+Usage
+---
+On first usage, creates a `~/.diogenes` directory in home dir. Two subcommands only right now,
+
+```
+dio.py add --name <name> --email <email>
+```
+
+Adds a new person to diogenes. This ends up being a folder in `~/.diogenes` and a little peep.json file. The rest of the folder is yours to futz around with.
+
+```
+dio.py recs
+```
+
+Manually give the recommendations for today, without emailing. Will give you the contents of what the daemon will email you, but just use the daemon.
+
+Notes
+---
+
+Default schedule is to contact everyone 2x a year, reminding on an unpredictable but nonrandom (hash-based) schedule of days. There's a little ABC for creating your own schedule if you want.
 
 Diogenes mark 1 was some paper
 mark 2 was a web app (that I took down, because it was getting annoying)
@@ -37,4 +58,3 @@ Motivation is Granovetter's observation that weak links are most important, "The
 
 It remains an old contention of mine that many of the two-factor things that happen a lot in psychology are sort of doing a PCA on a fractal space and popping out the first two factors and calling it a day. But given that, you need to actually respect the illusion of a two-factor thing going on and don't put anyone in that you contact out of your own volition all the time. Weak links, basically.
 
-Default schedule is to contact everyone 2x a year, reminding on an unpredictable but nonrandom (hash-based) schedule of days.
