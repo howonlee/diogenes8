@@ -3,12 +3,14 @@ Diogenes Mark 8
 
 Diogenes is an intensely personalized command line only CRM for friends. Personalized only to me, Howon Lee. Literally down to using my favorite way to refer to peeps in the plural, `peeps`.
 
+Yeah, there's other folks who did this and stuff. They are way less strange than me, though.
+
 Installing and Setup
 ---
 
 Overall goal is to create pip installable dealio. Not yet, tho.
 
-Set email url, password with envvars
+Set email url, password with envvars. Tested on Ubuntu only right now.
 
 You have to set:
 
@@ -22,24 +24,24 @@ DIO_DEST_EMAIL
 
 Use an app password for the `DIO_SMTP_PASSWORD`
 
-What I use for daemonization is supervisord. Cat the conf file to /etc/supervisor/conf.d/recommenderd.conf
 
 Usage
 ---
-On first usage, creates a `~/.diogenes` directory in home dir. Only a few subcommands right now.
+On first usage, creates a `~/.diogenes` directory in home dir. Only a few subcommands right now. The person data only goes into a little `peep.json` file inside of a folder in `~/.diogenes` corresponding to the person. So if you need to do actual CRM things and take notes or something, there's a ... folder. Just shove it in there. Any files you'd like.
+
+What I use for daemonization is supervisord. Cat the conf file to /etc/supervisor/conf.d/recommenderd.conf
 
 ```
 dio.py add --name <name> --email <email>
 ```
 
-Adds a new person to diogenes. This ends up being a folder in `~/.diogenes` and a little peep.json file. The rest of the folder is yours to futz around with. Addition is silently not strictly idempotent, because it replaces the person in the hash, I'm vacillating on whether that's good behavior.
+Adds a new person to diogenes. Addition is silently not strictly idempotent, because it replaces the person in the hash, I'm vacillating on whether that's good behavior.
 
 ```
 dio.py batchadd --batchfile <file name>
 ```
 
-Adds peeps batchwise. --batchfile takes a csv with fields `name` and `email` _only_. This ends up being a bunch of folders in `~/.diogenes` and a bunch of little peep.json files. The rest of the folders are yours to futz around with. Addition is silently not strictly idempotent, because it replaces the person in the hash, I'm vacillating on whether that's good behavior.
-
+Adds peeps batchwise. --batchfile takes a csv with fields `name` and `email` _only_.
 ```
 dio.py recs
 ```
