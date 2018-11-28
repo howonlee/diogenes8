@@ -24,6 +24,8 @@ DIO_DEST_EMAIL
 
 Use an app password for the `DIO_SMTP_PASSWORD`
 
+Also need to put these into the supervisord configs if daemonizing.
+
 
 Usage
 ---
