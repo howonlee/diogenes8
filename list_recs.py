@@ -8,14 +8,10 @@ Lists what all the recommendations are going to be this year
 """
 
 def list_all_recs(dio_dir: dio.DioDir, sched: dio.ScheduleABC, year: int) -> List[Optional[List[dio.Person]]]:
-    datetimes_in_year = map(
-            lambda x: datetime.datetime.combine(x, datetime.datetime.min.time()),
-            utils.days_in_year(year)
-            )
     return list(
             map(
                 lambda x: dio.get_recs(dio_dir, sched, x),
-                datetimes_in_year
+                utils.days_in_year(year)
                 )
             )
 

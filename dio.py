@@ -227,7 +227,7 @@ def main_recs(send:bool=True) -> None:
     dio_dir: DioDir = DioDir()
     dio_dir.create_if_not_exists()
     sched: ScheduleABC = DefaultSchedule()
-    today: datetime.date= datetime.datetime.now().date()
+    today: datetime.date = datetime.datetime.now().date()
     res: Optional[List[Person]] = get_recs(dio_dir, sched, today)
     next_day: datetime.date = sched.next_emailing_day(today)
     message: str = recs_to_message(res, next_day)
