@@ -2,6 +2,7 @@ from __future__ import annotations
 import calendar
 import os
 import shutil
+import csv
 import json
 import smtplib
 import email
@@ -12,7 +13,7 @@ import argparse
 import dataclasses
 import functools
 from abc import ABC
-from typing import Dict, Set, Any, IO, List, Optional
+from typing import Dict, Set, Any, Tuple, IO, List, Optional
 
 class DioDir(object):
     """
@@ -186,7 +187,7 @@ class DefaultSchedule(ScheduleABC):
         return dt < datetime.date(year=dt.year, month=7, day=2)
 
     @staticmethod
-    def split_emailed_set(set_of_days: Set[datetime.date]) -> Tuple[Set[datetime.date], Set[datetime.date]]:
+    def split_emailed_set(set_of_days: Set[datetime.date]) -> Tuple[List[datetime.date], List[datetime.date]]:
         return (sorted(list(filter(lambda x: DefaultSchedule.before_midyear(x), set_of_days))),
                 sorted(list(filter(lambda x: not DefaultSchedule.before_midyear(x), set_of_days))))
 
@@ -219,7 +220,7 @@ def recs_to_message(res: Optional[List[Person]], next_day: datetime.date) -> str
         return "Emailing day, but no peeps today. Add more peeps."
     else:
         return "\n".join(
-            ["\t".join([peep.name, peep.email]) for peep in res]
+            [peep.name for peep in res]
         )
 
 def send_message(contents: str) -> None:
@@ -274,10 +275,10 @@ if __name__ == "__main__":
         dio_dir = DioDir()
         dio_dir.create_if_not_exists()
         with open(args.batchfile, "r") as batch_file:
-            reader = csv.DictReader(batch_files, fields=["name"])
+            reader = csv.DictReader(batch_file, fields=["name"])
             for row in reader:
                 new_peep = Person(name=row["name"])
-                new_peep.save(dio-dir)
+                new_peep.save(dio_dir)
     elif args.subcommand == "recs":
         print("You should probably use the recs daemon.")
         main_recs(send=False)
