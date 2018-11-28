@@ -76,26 +76,24 @@ That's a terrible idea.
 Notes
 ---
 
-Default schedule is to contact everyone 2x a year, reminding on an unpredictable but nonrandom (hash-based) schedule of days. Pretty obvious that the unpredictable schedule helps. There's a little ABC for creating your own schedule if you want.
+The default schedule is to contact everyone 2x a year, reminding on an unpredictable but nonrandom (hash-based) schedule of days. Pretty obvious that the unpredictable schedule helps. There's a little ABC for creating your own schedule if you want.
 
-Diogenes mark 1 was some paper
+Diogenes Mark 1 was just writing on some paper. I then lost the paper and realized it should probably be backed up.
 
-mark 2 was a web app (that I took down, because it was getting annoying)
+Mark 2 was a web app which was generally a pain in the butt to janitor, as web apps do end up being. It was also based upon an entirely document-based (but Postgres) schema, meaning that there was no schema, so I got hit in the face with that, basically.
 
-mark 3 was a spreadsheet
+Mark 3 was a spreadsheet, which did fine but I was feeling the lack of scheduling apparatus a fair bit.
 
-mark 4 was a local postgres DB
+Mark 4 was a local postgres DB and small cronjob, no app. It was a surprising amount of work to execute the schema and janitor even the tiny DB (because I made the in-hindsight bad decision of putting it on RDS), and I wanted something more complicated than what a crontab could give me.
 
-mark 5 was a static site with JS that I took down
+Mark 5 was a static site with JS, which turns out to be a bad idea if you're planning runtimes of months.
 
-mark 6 was some paper
+Mark 6 was again some paper, because I gave up. There was also a pretty big lacuna there.
 
-Pretty big lacuna here
-
-mark 7 was a SQLite local crud command line app, threw that away
+Mark 7 was a SQLite local crud command line app. I then realized that I could just use fopen (the biggest SQLite competitor, as those devs would tell you).
 
 You're looking at mark 8, the filesystem local crud command line app that I messed with envvars a bit and de-hardcoded a lot of stuff so I could publish. There were also a bunch of lacunae where I was working way too much to be a proper human being. But overall, this little long-running thing is the basis of how I quit facebook for the last half-decade or so.
 
-Motivation is Granovetter's observation that weak links are most important, "The Strength of Weak Ties". But I believe the data better fits a renormalization group sort of picture of the actual use of weak ties. To the best of my knowledge, SOTA of community modelling is basically this sort of renormalization group flow picture (Kronecker graph, tensor methods), although it is pretty seldom that folks actually say renormalization group flow (Watts and Strogatz do, if I recall correctly, but I can't find a cite). Friends are a fractal phenomenon!
+The overall motivation is Granovetter's observation that weak links are most important, "The Strength of Weak Ties". But I believe the data better fits a renormalization group sort of picture of the actual use of weak ties. To the best of my knowledge, SOTA of community modelling is basically this sort of renormalization group flow picture (Kronecker graph, tensor methods), although it is pretty seldom that folks actually say renormalization group flow (Watts and Strogatz do, if I recall correctly, but I can't find a cite). Friends are a fractal phenomenon!
 
 It remains an old contention of mine that many of the two-factor things that happen a lot in psychology are sort of doing a PCA on a fractal space and popping out the first two factors and calling it a day. But given that, you need to actually respect the illusion of a two-factor thing going on and don't put anyone in that you contact out of your own volition all the time. Weak links, basically.
