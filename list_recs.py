@@ -5,6 +5,8 @@ from typing import List, Optional
 
 """
 Lists what all the recommendations are going to be this year
+
+Rather spoils the surprise a bit, but still here for testing reasons
 """
 
 def list_all_recs(dio_dir: dio.DioDir, sched: dio.ScheduleABC, year: int) -> List[Optional[List[dio.Person]]]:
