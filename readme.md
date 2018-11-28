@@ -74,7 +74,7 @@ No.
 Notes
 ---
 
-Default schedule is to contact everyone 2x a year, reminding on an unpredictable but nonrandom (hash-based) schedule of days. Pretty obvious that the unpredictable schedule helps (helps with Operant conditioning). There's a little ABC for creating your own schedule if you want.
+Default schedule is to contact everyone 2x a year, reminding on an unpredictable but nonrandom (hash-based) schedule of days. Pretty obvious that the unpredictable schedule helps. There's a little ABC for creating your own schedule if you want.
 
 Diogenes mark 1 was some paper
 
