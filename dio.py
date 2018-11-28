@@ -34,20 +34,14 @@ class DioDir(object):
 
 @dataclasses.dataclass
 class Person(object):
-    """
-    We want a general data object, really
-    """
     name: str
     salt: str = str(random.randint(int(1e30), int(9e30)))
 
     def __hash__(self) -> int:
         """
-        We are not too concerned about security here, tho
+        Don't use a more normal hash dealie, it's not stable between Python instances
         """
-        return int(hashlib.sha256("{}_{}".format(
-                    self.name,
-                    self.salt
-                ).encode("utf-8")).hexdigest(), 16)
+        return int(self.salt)
 
     def to_file(self, person_filename: str) -> None:
         with open(person_filename, "w") as person_file:
@@ -262,7 +256,9 @@ if __name__ == "__main__":
         with open(args.batchfile, "r") as batch_file:
             reader = csv.DictReader(batch_file, fieldnames=["name"])
             for row in reader:
-                new_peep = Person(name=row["name"])
+                # if you don't do this they all have the same salt
+                new_rand = str(random.randint(int(1e30), int(9e30)))
+                new_peep = Person(name=row["name"], salt=new_rand)
                 new_peep.save(dio_dir)
     elif args.subcommand == "recs":
         print("You should probably use the recs daemon.")

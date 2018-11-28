@@ -11,10 +11,10 @@ import os
 # fs from pyfakefs
 
 @st.composite
-def person_st(draw, name=st.text(), email=st.text(), salt=st.text()):
+def person_st(draw, name=st.text(), email=st.text(), salt=st.integers(min_value=1e30, max_value=9e30)):
     return dio.Person(
             name=draw(name),
-            salt=draw(salt))
+            salt=str(draw(salt)))
 
 @st.composite
 def dio_dir_st(draw, dirname=hy_fs.fspaths()):
