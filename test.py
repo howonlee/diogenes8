@@ -109,11 +109,18 @@ def test_schedule_should_have_days_contacted(sched):
             num_days_contacted += 1
     assert num_days_contacted > 40
 
-############## test no huge boluses of people contacted
-################
-################
-################
-################
+@hp.given(
+        peeps=st.lists(person_st(), max_size=100, unique=True),
+        dio_dir=dio_dir_st(),
+        sched=sched_st(),
+        dt=st.datetimes())
+def test_schedule_should_not_have_days_with_huge_boluses(fs, peeps, dio_dir, sched, dt):
+    """ going through a whole year takes too long... """
+    for peep in peeps:
+        peep.save(dio_dir)
+    curr_recs = dio.get_recs(dio_dir, sched, dt)
+    if curr_recs is not None:
+        assert len(curr_recs) < 10
 
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
 def test_add_person_idempotence(fs, peep, dio_dir):
