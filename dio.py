@@ -83,22 +83,13 @@ class Person(object):
         return Person.from_file(person_filepath)
 
     @staticmethod
-    def is_peep_dir(dir_to_check: str) -> bool:
-        parent_dir, filename = os.path.split(dir_to_check)
-        if isinstance(filename, (bytes, bytearray)):
-            filename = filename.decode(errors='replace')
-
-        if filename.startswith("peep_"):
-            return os.path.isdir(dir_to_check)
-        else:
-            return False
-    
-    @staticmethod
     def get_all(dio_dir: DioDir) -> List[Person]:
         dio_dir.create_if_not_exists()
-        dirs = os.listdir(dio_dir.dirname)
-        peep_dirs = filter(Person.is_peep_dir, dirs)
-        return list(map(Person.from_dir, peep_dirs))
+        res = []
+        for dirpath, _, filenames in os.walk(dio_dir.dirname):
+            if "peep_" in dirpath and "peep.json" in filenames:
+                res.append(Person.from_dir(dirpath))
+        return res
 
 
 class ScheduleABC(ABC):
