@@ -14,7 +14,7 @@ import dataclasses
 import functools
 import utils
 from abc import ABC
-from typing import Dict, Set, Any, Tuple, IO, List, Optional
+from typing import Dict, Set, Any, Tuple, IO, List, Optional, Iterator
 
 class DioDir(object):
     """
@@ -96,23 +96,23 @@ class ScheduleABC(ABC):
     def __init__(self):
         pass
 
-    def should_email_day(self, dt: datetime.datetime) -> bool:
+    def should_email_day(self, date: datetime.date) -> bool:
         """
         Returns True if we should email ourselves on day w/ reminders
         False otherwise
         """
         raise NotImplementedError()
 
-    def next_emailing_day(self, dt: datetime.datetime) -> datetime.datetime:
+    def next_emailing_day(self, date: datetime.date) -> datetime.date:
         """
         Will shortcircuit if we are currently doing emailing day that day
         """
-        curr_dt = dt
+        curr_dt = date
         while not self.should_email_day(curr_dt):
             curr_dt += datetime.timedelta(days=1)
         return curr_dt
 
-    def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
+    def should_contact(self, person: Person, date: datetime.date) -> bool:
         raise NotImplementedError()
 
 
@@ -123,7 +123,8 @@ class ThreeTimesSchedule(ScheduleABC):
     def __init__(self):
         pass
 
-    def should_email_day(self, dt: datetime.datetime) -> bool:
+    def should_email_day(self, date: datetime.date) -> bool:
+        dt = datetime.datetime.combine(date, datetime.datetime.min.time())
         _, weeknumber, weekday = dt.isocalendar()
         emailing_weeks = set(range(1, 9)) |\
                 set(range(18,26)) |\
@@ -132,10 +133,11 @@ class ThreeTimesSchedule(ScheduleABC):
             return True
         return False
     
-    def next_emailing_day(self, dt: datetime.datetime) -> datetime.datetime:
-        return super().next_emailing_day(dt)
+    def next_emailing_day(self, date: datetime.date) -> datetime.date:
+        return super().next_emailing_day(date)
 
-    def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
+    def should_contact(self, person: Person, date: datetime.date) -> bool:
+        dt = datetime.datetime.combine(date, datetime.datetime.min.time())
         _, weeknumber, weekday = dt.isocalendar()
         curr_emailing_week = weeknumber % 8
         curr_bucket = weekday + (weeknumber * 8)
@@ -151,53 +153,43 @@ class DefaultSchedule(ScheduleABC):
     def __init__(self):
         pass
 
-    def should_email_day(self, dt: datetime.datetime) -> bool:
+    def should_email_day(self, date: datetime.date) -> bool:
         # use date, since otherwise the finer increments mess things up wrt stability
         # so, 25% of days, or about 90 days/year
-        return hash(dt.date()) % 100 <= 25
+        return hash(date) % 100 <= 25
     
-    def next_emailing_day(self, dt: datetime.datetime) -> datetime.datetime:
-        return super().next_emailing_day(dt)
+    def next_emailing_day(self, date: datetime.date) -> datetime.date:
+        return super().next_emailing_day(date)
 
-    def set_of_days_emailed(self, year:int) -> Set[datetime.date]:
-        res: Set[datetime.date] = set()
-        for curr_day in utils.days_in_year(year):
-            if self.should_email_day(
-                    datetime.datetime.combine(
-                        curr_day,
-                        datetime.datetime.min.time()
-                    )
-                ):
-                res.add(curr_day)
-        return res
+    def set_of_days_emailed(self, year:int) -> Iterator[datetime.date]:
+        return filter(self.should_email_day, utils.days_in_year(year))
 
     @staticmethod
-    def before_midyear(dt: datetime.date) -> bool:
+    def before_midyear(date: datetime.date) -> bool:
         # midyear's day is july 2
-        return dt < datetime.date(year=dt.year, month=7, day=2)
+        return date < datetime.date(year=date.year, month=7, day=2)
 
     @staticmethod
     def split_emailed_set(set_of_days: Set[datetime.date]) -> Tuple[List[datetime.date], List[datetime.date]]:
         return (sorted(list(filter(lambda x: DefaultSchedule.before_midyear(x), set_of_days))),
                 sorted(list(filter(lambda x: not DefaultSchedule.before_midyear(x), set_of_days))))
 
-    def should_contact(self, person: Person, dt: datetime.datetime) -> bool:
-        days_emailed: Set[datetime.date] = self.set_of_days_emailed(dt.year)
-        dt_date = dt.date()
+    def should_contact(self, person: Person, date: datetime.date) -> bool:
+        days_emailed: Set[datetime.date] = set(self.set_of_days_emailed(date.year))
         fst_emailed, snd_emailed = DefaultSchedule.split_emailed_set(days_emailed)
         person_hash = hash(person)
         # assertion getting hit would not be happy
-        assert dt_date in days_emailed
-        email_list = fst_emailed if self.before_midyear(dt_date) else snd_emailed
+        assert date in days_emailed
+        email_list = fst_emailed if self.before_midyear(date) else snd_emailed
         total_cardinality = len(email_list)
-        curr_bucket = email_list.index(dt_date)
+        curr_bucket = email_list.index(date)
         return person_hash % total_cardinality == curr_bucket
 
-def get_recs(dio_dir: DioDir, schedule: ScheduleABC, dt_to_rec: datetime.datetime) -> Optional[List[Person]]:
-    if schedule.should_email_day(dt_to_rec):
+def get_recs(dio_dir: DioDir, schedule: ScheduleABC, date_to_rec: datetime.date) -> Optional[List[Person]]:
+    if schedule.should_email_day(date_to_rec):
         should_contact_on_day = functools.partial(
             schedule.should_contact,
-            dt=dt_to_rec
+            date=date_to_rec
         )
         return list(filter(should_contact_on_day, Person.get_all(dio_dir)))
     else:
@@ -235,9 +227,9 @@ def main_recs(send:bool=True) -> None:
     dio_dir: DioDir = DioDir()
     dio_dir.create_if_not_exists()
     sched: ScheduleABC = DefaultSchedule()
-    today: datetime.datetime = datetime.datetime.now()
+    today: datetime.date= datetime.datetime.now().date()
     res: Optional[List[Person]] = get_recs(dio_dir, sched, today)
-    next_day: datetime.date = sched.next_emailing_day(today).date()
+    next_day: datetime.date = sched.next_emailing_day(today)
     message: str = recs_to_message(res, next_day)
     if send:
         send_message(message)

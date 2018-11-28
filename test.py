@@ -61,42 +61,41 @@ def test_dio_dir_creation_idempotence(fs, dio_dir):
     dio_dir.create_if_not_exists()
     assert os.path.exists(dio_dir.dirname)
 
-@hp.given(sched=sched_st(), dt=st.datetimes())
-def test_schedule_should_email_day_idempotence(sched, dt):
-    fst_res = sched.should_email_day(dt)
-    snd_res = sched.should_email_day(dt)
+@hp.given(sched=sched_st(), date=st.dates())
+def test_schedule_should_email_day_idempotence(sched, date):
+    fst_res = sched.should_email_day(date)
+    snd_res = sched.should_email_day(date)
     assert fst_res == snd_res
 
-@hp.given(peep=person_st(), sched=sched_st(), dt=st.datetimes())
+@hp.given(peep=person_st(), sched=sched_st(), date=st.dates())
 @hp.settings(
         suppress_health_check=(hp.HealthCheck.filter_too_much,),
         max_examples=200
 )
-def test_schedule_should_contact_idempotence(fs, peep, sched, dt):
-    hp.assume(sched.should_email_day(dt))
-    fst_res = sched.should_contact(peep, dt)
-    snd_res = sched.should_contact(peep, dt)
+def test_schedule_should_contact_idempotence(fs, peep, sched, date):
+    hp.assume(sched.should_email_day(date))
+    fst_res = sched.should_contact(peep, date)
+    snd_res = sched.should_contact(peep, date)
     assert fst_res == snd_res
 
-@hp.given(sched=sched_st(), dt=st.datetimes())
-def test_schedule_next_day_should_be_after_day(sched, dt):
-    next_day = sched.next_emailing_day(dt)
-    assert next_day >= dt
+@hp.given(sched=sched_st(), date=st.dates())
+def test_schedule_next_day_should_be_after_day(sched, date):
+    next_day = sched.next_emailing_day(date)
+    assert next_day >= date
 
-@hp.given(sched=sched_st(), dt=st.datetimes())
-def test_fst_email_comparable_to_snd_email(sched, dt):
+@hp.given(sched=sched_st(), date=st.dates())
+def test_fst_email_comparable_to_snd_email(sched, date):
     """ imbalance should be ~ Gaussian, so this is just verifying thin-tailedness """
-    days_to_schedule = sched.set_of_days_emailed(dt.year)
+    days_to_schedule = sched.set_of_days_emailed(date.year)
     fst, snd = dio.DefaultSchedule.split_emailed_set(days_to_schedule)
-    assert abs(len(fst) - len(snd)) < 40
+    assert abs(len(fst) - len(snd)) < 80
 
 @hp.given(peep=person_st(), dio_dir=dio_dir_st(), sched=sched_st())
 def test_person_contacted_exactly_twice_a_year(fs, peep, dio_dir, sched):
     peep.save(dio_dir)
     num_times_contacted = 0
     for curr_day in utils.days_in_year(2018):
-        curr_dt = datetime.datetime.combine(curr_day, datetime.datetime.min.time())
-        if sched.should_email_day(curr_dt) and sched.should_contact(peep, curr_dt):
+        if sched.should_email_day(curr_day) and sched.should_contact(peep, curr_day):
             num_times_contacted += 1
     assert num_times_contacted == 2
 
@@ -104,8 +103,7 @@ def test_person_contacted_exactly_twice_a_year(fs, peep, dio_dir, sched):
 def test_schedule_should_have_days_contacted(sched):
     num_days_contacted = 0
     for curr_day in utils.days_in_year(2018):
-        curr_dt = datetime.datetime.combine(curr_day, datetime.datetime.min.time())
-        if sched.should_email_day(curr_dt):
+        if sched.should_email_day(curr_day):
             num_days_contacted += 1
     assert num_days_contacted > 40
 
@@ -113,12 +111,12 @@ def test_schedule_should_have_days_contacted(sched):
         peeps=st.lists(person_st(), max_size=100, unique=True),
         dio_dir=dio_dir_st(),
         sched=sched_st(),
-        dt=st.datetimes())
-def test_schedule_should_not_have_days_with_huge_boluses(fs, peeps, dio_dir, sched, dt):
+        date=st.dates())
+def test_schedule_should_not_have_days_with_huge_boluses(fs, peeps, dio_dir, sched, date):
     """ going through a whole year takes too long... """
     for peep in peeps:
         peep.save(dio_dir)
-    curr_recs = dio.get_recs(dio_dir, sched, dt)
+    curr_recs = dio.get_recs(dio_dir, sched, date)
     if curr_recs is not None:
         assert len(curr_recs) < 10
 
