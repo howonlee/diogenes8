@@ -90,7 +90,7 @@ Mark 5 was a static site with JS, which turns out to be a bad idea if you're pla
 
 Mark 6 was again some paper, because I gave up. There was also a pretty big lacuna there.
 
-Mark 7 was a SQLite local crud command line app. I then realized that I could just use fopen (the biggest SQLite competitor, as those devs would tell you).
+Mark 7 was a SQLite local crud command line app. I then realized that I could just use fopen (the biggest SQLite competitor, as the SQLite folks would tell you).
 
 You're looking at mark 8, the filesystem local crud command line app that I messed with envvars a bit and de-hardcoded a lot of stuff so I could publish. There were also a bunch of lacunae where I was working way too much to be a proper human being. But overall, this little long-running thing is the basis of how I quit facebook for the last half-decade or so.
 
