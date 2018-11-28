@@ -62,7 +62,7 @@ Why not just use git on the .diogenes folder?
 I want to add more stuff onto this.
 ---
 
-It's a perfectly normal little bit of the filesystem. Go have fun.
+The actual place where the folks are stored, `~/.diogenes`, is a perfectly normal little bit of the filesystem. Each person is construed as a folder, so you can stick more stuff in there. Have fun.
 
 Shouldn't you automate the actual contacting of people?
 ---
