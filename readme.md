@@ -1,9 +1,9 @@
 Diogenes Mark 8
 ===
 
-Diogenes is an intensely personalized command line only CRM for friends. Personalized only to me, Howon Lee. Literally down to using my favorite way to refer to peeps in the plural, `peeps`.
+Diogenes is an intensely personalized command-line-only CRM for friends. Personalized only to me, Howon Lee. Literally down to using my favorite way to refer to peeps in the plural, `peeps`.
 
-There are of course other folks who did analogous things, but I wanted this specific thing.
+There are of course other folks who did analogous things, almost without exception more user-friendly (for example, [Monica](https://www.monicahq.com/)) but I wanted this specific thing.
 
 Installing and Setup
 ---
