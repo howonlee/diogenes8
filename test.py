@@ -109,6 +109,12 @@ def test_schedule_should_have_days_contacted(sched):
             num_days_contacted += 1
     assert num_days_contacted > 40
 
+############## test no huge boluses of people contacted
+################
+################
+################
+################
+
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
 def test_add_person_idempotence(fs, peep, dio_dir):
     dio_dir.create_if_not_exists()

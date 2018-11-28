@@ -140,7 +140,7 @@ class ThreeTimesSchedule(ScheduleABC):
         curr_emailing_week = weeknumber % 8
         curr_bucket = weekday + (weeknumber * 8)
         total_days_per_period = 8 * 7
-        person_hash = hash(Person)
+        person_hash = hash(person)
         return (person_hash % total_days_per_period) == curr_bucket
 
 class DefaultSchedule(ScheduleABC):
@@ -185,7 +185,7 @@ class DefaultSchedule(ScheduleABC):
         days_emailed: Set[datetime.date] = self.set_of_days_emailed(dt.year)
         dt_date = dt.date()
         fst_emailed, snd_emailed = DefaultSchedule.split_emailed_set(days_emailed)
-        person_hash = hash(Person)
+        person_hash = hash(person)
         # assertion getting hit would not be happy
         assert dt_date in days_emailed
         email_list = fst_emailed if self.before_midyear(dt_date) else snd_emailed
