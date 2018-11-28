@@ -103,7 +103,8 @@ def test_person_contacted_exactly_twice_a_year(fs, peep, dio_dir, sched):
     peep.save(dio_dir)
     num_times_contacted = 0
     for curr_day in utils.days_in_year(2018):
-        if sched.should_email_day(curr_day) and sched.should_contact(peep, curr_day):
+        curr_dt = datetime.datetime.combine(curr_day, datetime.datetime.min.time())
+        if sched.should_email_day(curr_dt) and sched.should_contact(peep, curr_dt):
             num_times_contacted += 1
     assert num_times_contacted == 2
 
@@ -111,7 +112,8 @@ def test_person_contacted_exactly_twice_a_year(fs, peep, dio_dir, sched):
 def test_schedule_should_have_days_contacted(sched):
     num_days_contacted = 0
     for curr_day in utils.days_in_year(2018):
-        if sched.should_email_day(curr_day):
+        curr_dt = datetime.datetime.combine(curr_day, datetime.datetime.min.time())
+        if sched.should_email_day(curr_dt):
             num_days_contacted += 1
     assert num_days_contacted > 40
 
