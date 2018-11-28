@@ -5,6 +5,7 @@ import shutil
 import csv
 import json
 import smtplib
+import hashlib
 import email
 import random
 import math
@@ -40,9 +41,13 @@ class Person(object):
     salt: str = str(random.randint(int(1e30), int(9e30)))
 
     def __hash__(self) -> int:
-        return hash("{}_{}".format(
+        """
+        We are not too concerned about security here, tho
+        """
+        return int(hashlib.sha256("{}_{}".format(
                     self.name,
-                    self.salt))
+                    self.salt
+                ).encode("utf-8")).hexdigest(), 16)
 
     def to_file(self, person_filename: str) -> None:
         with open(person_filename, "w") as person_file:
@@ -142,8 +147,7 @@ class ThreeTimesSchedule(ScheduleABC):
         curr_emailing_week = weeknumber % 8
         curr_bucket = weekday + (weeknumber * 8)
         total_days_per_period = 8 * 7
-        person_hash = hash(person)
-        return (person_hash % total_days_per_period) == curr_bucket
+        return (hash(person) % total_days_per_period) == curr_bucket
 
 class DefaultSchedule(ScheduleABC):
     """
@@ -156,7 +160,7 @@ class DefaultSchedule(ScheduleABC):
     def should_email_day(self, date: datetime.date) -> bool:
         # use date, since otherwise the finer increments mess things up wrt stability
         # so, 25% of days, or about 90 days/year
-        return hash(date) % 100 <= 25
+        return utils.get_date_hash(date) % 100 <= 25
     
     def next_emailing_day(self, date: datetime.date) -> datetime.date:
         return super().next_emailing_day(date)
@@ -177,13 +181,12 @@ class DefaultSchedule(ScheduleABC):
     def should_contact(self, person: Person, date: datetime.date) -> bool:
         days_emailed: Set[datetime.date] = set(self.set_of_days_emailed(date.year))
         fst_emailed, snd_emailed = DefaultSchedule.split_emailed_set(days_emailed)
-        person_hash = hash(person)
         # assertion getting hit would not be happy
         assert date in days_emailed
         email_list = fst_emailed if self.before_midyear(date) else snd_emailed
         total_cardinality = len(email_list)
         curr_bucket = email_list.index(date)
-        return person_hash % total_cardinality == curr_bucket
+        return hash(person) % total_cardinality == curr_bucket
 
 def get_recs(dio_dir: DioDir, schedule: ScheduleABC, date_to_rec: datetime.date) -> Optional[List[Person]]:
     if schedule.should_email_day(date_to_rec):
