@@ -12,6 +12,7 @@ import datetime
 import argparse
 import dataclasses
 import functools
+import utils
 from abc import ABC
 from typing import Dict, Set, Any, Tuple, IO, List, Optional
 
@@ -168,10 +169,8 @@ class DefaultSchedule(ScheduleABC):
         return super().next_emailing_day(dt)
 
     def set_of_days_emailed(self, year:int) -> Set[datetime.date]:
-        first_day_of_year = datetime.datetime(year=year, month=1, day=1).date()
         res: Set[datetime.date] = set()
-        for day in range(365):
-            curr_day = first_day_of_year + datetime.timedelta(days=day)
+        for curr_day in utils.days_in_year(year):
             if self.should_email_day(
                     datetime.datetime.combine(
                         curr_day,
