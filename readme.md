@@ -69,7 +69,7 @@ The actual place where the folks are stored, `~/.diogenes`, is a perfectly norma
 Shouldn't you automate the actual contacting of people?
 ---
 
-No.
+That's a terrible idea.
 
 Notes
 ---
