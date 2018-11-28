@@ -23,5 +23,7 @@ if __name__ == "__main__":
     dio_dir = dio.DioDir()
     sched = dio.DefaultSchedule()
     curr_year = datetime.datetime.now().year
-    print(list_all_recs(dio_dir, sched, curr_year))
+    all_recs = list_all_recs(dio_dir, sched, curr_year)
+    for day, recs in zip(utils.days_in_year(curr_year), all_recs):
+        print("day: {} - recs: {}".format(str(day), str(recs)))
 

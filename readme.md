@@ -59,6 +59,11 @@ Synchronization and Backup
 
 Why not just use git on the .diogenes folder?
 
+I want to add more stuff onto this.
+---
+
+It's a perfectly normal little bit of the filesystem. Go have fun.
+
 Shouldn't you automate the actual contacting of people?
 ---
 
