@@ -42,6 +42,7 @@ dio.py batchadd --batchfile <file name>
 ```
 
 Adds peeps batchwise. --batchfile takes a csv with fields `name` _only_.
+
 ```
 dio.py recs
 ```

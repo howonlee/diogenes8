@@ -275,7 +275,7 @@ if __name__ == "__main__":
         dio_dir = DioDir()
         dio_dir.create_if_not_exists()
         with open(args.batchfile, "r") as batch_file:
-            reader = csv.DictReader(batch_file, fields=["name"])
+            reader = csv.DictReader(batch_file, fieldnames=["name"])
             for row in reader:
                 new_peep = Person(name=row["name"])
                 new_peep.save(dio_dir)
