@@ -32,7 +32,7 @@ On first usage, creates a `~/.diogenes` directory in home dir. Only a few subcom
 What I use for daemonization is supervisord. Conf file included is a valid jinja2 template. Fill the members of template out and cat the conf file to /etc/supervisor/conf.d/recommenderd.conf
 
 ```
-dio.py add --name <name> --email <email>
+dio.py add --name <name>
 ```
 
 Adds a new person to diogenes. Addition is silently not strictly idempotent, because it replaces the person in the hash, I'm vacillating on whether that's good behavior.
@@ -41,7 +41,7 @@ Adds a new person to diogenes. Addition is silently not strictly idempotent, bec
 dio.py batchadd --batchfile <file name>
 ```
 
-Adds peeps batchwise. --batchfile takes a csv with fields `name` and `email` _only_.
+Adds peeps batchwise. --batchfile takes a csv with fields `name` _only_.
 ```
 dio.py recs
 ```

@@ -13,7 +13,6 @@ import os
 def person_st(draw, name=st.text(), email=st.text(), salt=st.text()):
     return dio.Person(
             name=draw(name),
-            email=draw(email),
             salt=draw(salt))
 
 @st.composite
