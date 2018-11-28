@@ -86,6 +86,8 @@ mark 5 was a static site with JS that I took down
 
 mark 6 was some paper
 
+Pretty big lacuna here
+
 mark 7 was a SQLite local crud command line app, threw that away
 
 You're looking at mark 8, the filesystem local crud command line app that I messed with envvars a bit and de-hardcoded a lot of stuff so I could publish. There were also a bunch of lacunae where I was working way too much to be a proper human being. But overall, this little long-running thing is the basis of how I quit facebook for the last half-decade or so.
