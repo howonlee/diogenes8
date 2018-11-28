@@ -61,7 +61,7 @@ I seriously recommend using pen and paper and taking an afternoon to go over you
 Synchronization and Backup
 ---
 
-Why not just use git on the .diogenes folder?
+Why not just use git on the .diogenes folder? It's actually just all text all the time there.
 
 I want to add more stuff onto this.
 ---
