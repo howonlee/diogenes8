@@ -261,7 +261,7 @@ if __name__ == "__main__":
                 new_peep = Person(name=row["name"], salt=new_rand)
                 new_peep.save(dio_dir)
     elif args.subcommand == "recs":
-        print("You should probably use the recs daemon.")
+        print("Recommendations for today. There is also a recs daemon.")
         main_recs(send=False)
     else:
         raise NotImplementedError("Invalid command")
