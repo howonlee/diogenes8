@@ -73,6 +73,11 @@ Shouldn't you automate the actual contacting of people?
 
 That's a terrible idea.
 
+Why's it called Diogenes?
+---
+
+The most antisocial way to be social should be named after the most antisocial philosopher.
+
 Notes
 ---
 
