@@ -11,10 +11,19 @@ import os
 # fs from pyfakefs
 
 @st.composite
-def person_st(draw, name=st.text(), email=st.text(), salt=st.integers(min_value=1e30, max_value=9e30)):
+def person_st(draw, name=st.text(), salt=st.integers(min_value=1e30, max_value=9e30)):
     return dio.Person(
             name=draw(name),
             salt=str(draw(salt)))
+
+@st.composite
+def settings_st(draw, username=st.text(), password=st.text(), dest_email=st.text(), url=st.text(), port=st.integers(min_value=0)):
+    return dio.Settings(
+        smtp_username=draw(username),
+        smtp_password=draw(password),
+        smtp_dest_email=draw(dest_email),
+        smtp_url=draw(url),
+        smtp_port=draw(port))
 
 @st.composite
 def dio_dir_st(draw, dirname=hy_fs.fspaths()):
@@ -45,6 +54,13 @@ def test_person_folder_encode_involution(fs, peep, dio_dir):
     dirname = peep.get_dir(dio_dir)
     new_peep = dio.Person.from_dir(dirname)
     assert peep == new_peep
+
+@hp.given(settings=settings_st(), dio_dir=dio_dir_st())
+def test_settings_encode_involution(fs, settings, dio_dir):
+    dio_dir.create_if_not_exists()
+    settings.to_file(dio_dir.get_settings_filename())
+    new_settings = dio.Settings.from_file(dio_dir.get_settings_filename())
+    assert settings == new_settings
 
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
 def test_get_all_idempotence(fs, peep, dio_dir):
