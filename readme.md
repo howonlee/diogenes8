@@ -28,39 +28,27 @@ On first usage, creates a `~/.diogenes` directory in home dir. Only a few subcom
 
 Here are the subcommands.
 
-```
-dio add <name>
-```
+`dio add <name>`
 
 Adds a new person to diogenes. Addition is silently not strictly idempotent, because it replaces the person in the hash, I'm vacillating on whether that's good behavior.
 
-```
-dio batchadd <file name>
-```
+`dio batchadd <file name>`
 
 Adds peeps batchwise. --batchfile takes a csv with fields `name` _only_.
 
-```
-dio recs
-```
+`dio recs`
 
 Manually email destination email the recommendations for today.
 
-```
-dio dryrecs
-```
+`dio dryrecs`
 
 Manually give you the contents of the recommendations for today without emailing.
 
-```
-dio setupemail
-```
+`dio setupemail`
 
 Sets up the email settings for emailing. This just assumes an SMTP server already exists somewhere. To use webmail with 2fa, use an app password.
 
-```
-dio setupcron
-```
+`dio setupcron`
 
 Sets up the cronjob for automatic emailing.
 
