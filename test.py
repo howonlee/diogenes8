@@ -2,7 +2,6 @@ import hypothesis as hp
 import hypothesis.strategies as st
 import hypothesis_fspaths as hy_fs
 import dio
-import utils
 import datetime
 import pytest
 import pyfakefs
@@ -110,7 +109,7 @@ def test_fst_email_comparable_to_snd_email(sched, date):
 def test_person_contacted_exactly_twice_a_year(fs, peep, dio_dir, sched):
     peep.save(dio_dir)
     num_times_contacted = 0
-    for curr_day in utils.days_in_year(2018):
+    for curr_day in dio.days_in_year(2018):
         if sched.should_email_day(curr_day) and sched.should_contact(peep, curr_day):
             num_times_contacted += 1
     assert num_times_contacted == 2
@@ -118,7 +117,7 @@ def test_person_contacted_exactly_twice_a_year(fs, peep, dio_dir, sched):
 @hp.given(sched=sched_st())
 def test_schedule_should_have_days_contacted(sched):
     num_days_contacted = 0
-    for curr_day in utils.days_in_year(2018):
+    for curr_day in dio.days_in_year(2018):
         if sched.should_email_day(curr_day):
             num_days_contacted += 1
     assert num_days_contacted > 40

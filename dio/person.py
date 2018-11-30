@@ -46,18 +46,18 @@ class Person(object):
         return os.path.join(dirname, "peep.json")
 
     @staticmethod
-    def from_file(person_filename: str) -> Person:
+    def from_file(person_filename: str):
         with open(person_filename, "r") as person_file:
             json_res: Dict[str, Any] = json.load(person_file)
             return Person(**json_res)
 
     @staticmethod
-    def from_dir(person_dir: str) -> Person:
+    def from_dir(person_dir: str):
         person_filepath = Person.get_filename(person_dir)
         return Person.from_file(person_filepath)
 
     @staticmethod
-    def get_all(dio_dir: DioDir) -> List[Person]:
+    def get_all(dio_dir: DioDir):
         dio_dir.create_if_not_exists()
         res = []
         for dirpath, _, filenames in os.walk(dio_dir.dirname):

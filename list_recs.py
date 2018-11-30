@@ -23,4 +23,3 @@ if __name__ == "__main__":
     all_recs = list_all_recs(dio_dir, sched, curr_year)
     for day, recs in zip(dio.days_in_year(curr_year), all_recs):
         print("day: {} - recs: {}".format(str(day), str(recs)))
-

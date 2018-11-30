@@ -9,38 +9,6 @@ import datetime
 from dio import *
 from typing import Optional, Any, Dict, List
 
-def get_recs(dio_dir: DioDir, schedule: ScheduleABC, date_to_rec: datetime.date) -> Optional[List[Person]]:
-    if schedule.should_email_day(date_to_rec):
-        should_contact_on_day = functools.partial(
-            schedule.should_contact,
-            date=date_to_rec
-        )
-        return list(filter(should_contact_on_day, Person.get_all(dio_dir)))
-    else:
-        return None
-
-def recs_to_message(res: Optional[List[Person]], next_day: datetime.date) -> str:
-    if res is None:
-        return "Next emailing day is : {}".format(next_day)
-    elif res == []:
-        return "Emailing day, but no peeps today. Add more peeps."
-    else:
-        return "\n".join(
-            [peep.name for peep in res]
-        )
-
-def send_message(contents: str, date: datetime.date, settings: Settings) -> None:
-    msg_obj: email.message.EmailMessage = email.message.EmailMessage()
-    msg_obj['From'] = settings.smtp_username
-    msg_obj['To'] = settings.smtp_dest_email
-    msg_obj['Subject'] = "Diogenes | {}".format(str(date))
-    msg_obj.set_content(contents)
-    with smtplib.SMTP(settings.smtp_url, settings.smtp_port) as server:
-        server.ehlo()
-        server.starttls()
-        server.login(settings.smtp_username, settings.smtp_password)
-        server.send_message(msg_obj)
-
 def main_recs(send:bool=True) -> None:
     dio_dir: DioDir = DioDir()
     dio_dir.create_if_not_exists()

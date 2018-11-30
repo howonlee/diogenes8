@@ -15,7 +15,7 @@ class Settings(object):
             json.dump(dataclasses.asdict(self), settings_file)
 
     @staticmethod
-    def from_file(settings_filename: str) -> Settings:
+    def from_file(settings_filename: str):
         with open(settings_filename, "r") as settings_file:
             json_res: Dict[str, Any] = json.load(settings_file)
             return Settings(**json_res)
