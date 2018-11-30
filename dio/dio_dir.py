@@ -27,6 +27,11 @@ class DioDir(object):
         If you use git to deal with this, as I do,
         you shouldn't check in settings.json, it has an app pwd
         """
+        with open(os.path.join(self.dirname, ".gitignore"), "r") as gitignore_file:
+            for line in gitignore_file:
+                # it's in the file already
+                if to_append in line:
+                    return
         with open(os.path.join(self.dirname, ".gitignore"), "a+") as gitignore_file:
             gitignore_file.write("{}\n".format(to_append))
 
@@ -56,11 +61,11 @@ class DioDir(object):
 
     def set_settings_interactive(self) -> Settings:
         settings_filename = self.get_settings_filename()
-        smtp_username = input("SMTP username (your webmail username, usually")
-        smtp_password = input("SMTP app password (for gmail, see https://support.google.com/accounts/answer/185833")
-        smtp_dest_email = input("Destination email. Can be same or different from SMTP username.")
-        smtp_url = input("SMTP url [smtp.gmail.com]")
-        smtp_port = input("SMTP port [587]")
+        smtp_username = input("SMTP username (your webmail username, usually) > ")
+        smtp_password = input("SMTP app password (for gmail, see https://support.google.com/accounts/answer/185833) > ")
+        smtp_dest_email = input("Destination email. Can be same or different from SMTP username. > ")
+        smtp_url = input("SMTP url [smtp.gmail.com] > ") or "smtp.gmail.com"
+        smtp_port = input("SMTP port [587] > ") or 587
         new_settings = Settings(smtp_username=smtp_username,
                                 smtp_password=smtp_password,
                                 smtp_dest_email=smtp_dest_email,

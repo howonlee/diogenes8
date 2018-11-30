@@ -20,8 +20,8 @@ def cli():
 @cli.command()
 @click.argument("name", required=True)
 def add(name):
-    dio_dir = DioDir()
-    new_peep = Person(name=name)
+    dio_dir: DioDir = DioDir()
+    new_peep: Person = Person(name=name)
     new_peep.save(dio_dir)
     click.echo("New person with name {} added".format(name))
 
@@ -29,13 +29,13 @@ def add(name):
 @click.argument("batch_file_name", required=True)
 def batchadd(batch_file_name):
     click.echo("Processing batch file...")
-    dio_dir = DioDir()
+    dio_dir: DioDir = DioDir()
     with open(batch_file_name, "r") as batch_file:
         reader = csv.DictReader(batch_file, fieldnames=["name"])
         for row in reader:
             # if you don't do this they all have the same salt
-            new_rand = str(random.randint(int(1e30), int(9e30)))
-            new_peep = Person(name=row["name"], salt=new_rand)
+            new_rand: str = str(random.randint(int(1e30), int(9e30)))
+            new_peep: Person = Person(name=row["name"], salt=new_rand)
             new_peep.save(dio_dir)
     click.echo("Finished processing batch file...")
 
@@ -65,13 +65,13 @@ def recs():
 
 @cli.command()
 def setup():
-    dio_dir = DioDir()
+    dio_dir: DioDir = DioDir()
     dio_dir.set_settings_interactive()
     curr_cron = crontab.CronTab(user=True)
-    if len(curr_cron.find_comment("diogenes8")) > 0:
+    if len(list(curr_cron.find_comment("diogenes8"))) > 0:
         pass # do nothing
     else:
-        job = curr_cron.new(command="dio recs" comment="diogenes8")
+        job = curr_cron.new(command="dio recs", comment="diogenes8")
         job.hour.on(15)
         curr_cron.write_to_user(user=True)
 
