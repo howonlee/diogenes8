@@ -1,5 +1,6 @@
 import dataclasses
 import json
+from typing import Dict, Any
 
 @dataclasses.dataclass
 class Settings(object):

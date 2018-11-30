@@ -1,6 +1,6 @@
 from abc import ABC
 import datetime
-import Person
+from person import Person
 
 class ScheduleABC(ABC):
     def __init__(self):
