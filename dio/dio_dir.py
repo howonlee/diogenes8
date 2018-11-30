@@ -1,7 +1,7 @@
 import os
 import getpass
 import os.path
-from settings import Settings
+from .settings import Settings
 from typing import Optional
 
 class DioDir(object):

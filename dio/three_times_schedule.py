@@ -1,6 +1,6 @@
 import datetime
-from schedule_abc import ScheduleABC
-from person import Person
+from .schedule_abc import ScheduleABC
+from .person import Person
 
 
 class ThreeTimesSchedule(ScheduleABC):

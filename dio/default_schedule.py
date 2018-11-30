@@ -1,7 +1,7 @@
 import datetime
-import utils
-from person import Person
-from schedule_abc import ScheduleABC
+from .utils import days_in_year, get_date_hash
+from .person import Person
+from .schedule_abc import ScheduleABC
 from typing import Optional, List, Tuple, Set, Iterator
 
 class DefaultSchedule(ScheduleABC):
@@ -15,13 +15,13 @@ class DefaultSchedule(ScheduleABC):
     def should_email_day(self, date: datetime.date) -> bool:
         # use date, since otherwise the finer increments mess things up wrt stability
         # so, 25% of days, or about 90 days/year
-        return utils.get_date_hash(date) % 100 <= 25
+        return get_date_hash(date) % 100 <= 25
     
     def next_emailing_day(self, date: datetime.date) -> datetime.date:
         return super().next_emailing_day(date)
 
     def set_of_days_emailed(self, year:int) -> Iterator[datetime.date]:
-        return filter(self.should_email_day, utils.days_in_year(year))
+        return filter(self.should_email_day, days_in_year(year))
 
     @staticmethod
     def before_midyear(date: datetime.date) -> bool:

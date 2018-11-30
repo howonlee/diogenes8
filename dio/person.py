@@ -4,7 +4,7 @@ import os
 import os.path
 import json
 import shutil
-from dio_dir import DioDir
+from .dio_dir import DioDir
 from typing import Dict, List, Any
 
 @dataclasses.dataclass

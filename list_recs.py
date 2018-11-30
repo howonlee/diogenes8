@@ -1,5 +1,4 @@
 import dio
-import utils
 import datetime
 from typing import List, Optional
 
@@ -13,7 +12,7 @@ def list_all_recs(dio_dir: dio.DioDir, sched: dio.ScheduleABC, year: int) -> Lis
     return list(
             map(
                 lambda x: dio.get_recs(dio_dir, sched, x),
-                utils.days_in_year(year)
+                dio.days_in_year(year)
                 )
             )
 
@@ -22,6 +21,6 @@ if __name__ == "__main__":
     sched = dio.DefaultSchedule()
     curr_year = datetime.datetime.now().year
     all_recs = list_all_recs(dio_dir, sched, curr_year)
-    for day, recs in zip(utils.days_in_year(curr_year), all_recs):
+    for day, recs in zip(dio.days_in_year(curr_year), all_recs):
         print("day: {} - recs: {}".format(str(day), str(recs)))
 

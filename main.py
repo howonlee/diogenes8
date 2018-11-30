@@ -1,5 +1,13 @@
 from __future__ import annotations
-import dio
+import functools
+import csv
+import random
+import email
+import smtplib
+import argparse
+import datetime
+from dio import *
+from typing import Optional, Any, Dict, List
 
 def get_recs(dio_dir: DioDir, schedule: ScheduleABC, date_to_rec: datetime.date) -> Optional[List[Person]]:
     if schedule.should_email_day(date_to_rec):
