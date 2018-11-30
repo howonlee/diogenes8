@@ -3,6 +3,6 @@ from default_schedule import DefaultSchedule
 from dio_dir import DioDir
 from person import Person
 from settings import Settings
-from three_times_schedule improt ThreeTimesSchedule
+from three_times_schedule import ThreeTimesSchedule
 
 import utils
