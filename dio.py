@@ -33,6 +33,14 @@ class DioDir(object):
         filename = "{}_settings.json".format(getpass.getuser())
         return os.path.join(self.dirname, filename)
 
+    def append_to_gitignore(self, to_append) -> None:
+        """
+        If you use git to deal with this, as I do,
+        you shouldn't check in settings.json, it has an app pwd
+        """
+        with open(os.path.join(self.dirname, ".gitignore"), "a+") as gitignore_file:
+            gitignore_file.write("{}\n".format(to_append))
+
     def get_settings(self) -> Optional[Settings]:
         settings_filename = self.get_settings_filename()
         if os.path.isfile(settings_filename):
@@ -54,6 +62,7 @@ class DioDir(object):
     def set_settings(self, new_settings: Settings) -> Settings:
         settings_filename = self.get_settings_filename()
         new_settings.to_file(settings_filename)
+        self.append_to_gitignore(settings_filename)
         return new_settings
 
     def set_settings_interactive(self) -> Settings:
@@ -69,6 +78,7 @@ class DioDir(object):
                                 smtp_url=smtp_url,
                                 smtp_port=int(smtp_port))
         new_settings.to_file(settings_filename)
+        self.append_to_gitignore(settings_filename)
         return new_settings
 
     def create_if_not_exists(self):
