@@ -1,3 +1,5 @@
+import datetime
+
 class DefaultSchedule(ScheduleABC):
     """
     Email everyone in a way that looks super random
