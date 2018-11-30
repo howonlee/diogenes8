@@ -4,6 +4,8 @@ __pycache__
 .mypy_cache/
 .hypothesis/
 *egg-info/
+dist/
+build/
 
 # don't check in my own list of friends lol
 *.csv
