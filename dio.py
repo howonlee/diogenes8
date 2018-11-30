@@ -2,6 +2,7 @@ from __future__ import annotations
 import calendar
 import os
 import shutil
+import getpass
 import csv
 import json
 import smtplib
@@ -28,11 +29,70 @@ class DioDir(object):
         else:
             self.dirname = str(dirname)
 
-    ############ settings.json per diodir
+    def get_settings_filename(self) -> str:
+        filename = "{}_settings.json".format(getpass.getuser())
+        return os.path.join(self.dirname, filename)
+
+    def get_settings(self) -> Optional[Settings]:
+        settings_filename = self.get_settings_filename()
+        if os.path.isfile(settings_filename):
+            return Settings.from_file(settings_filename)
+        else:
+            return None
+
+    def get_settings_interactive(self) -> Settings:
+        """
+        try to get settings.
+        if fail, then interactively set them and get them
+        """
+        res = self.get_settings()
+        if res is None:
+            return self.set_settings_interactive()
+        else:
+            return res
+
+    def set_settings(self, new_settings: Settings) -> Settings:
+        settings_filename = self.get_settings_filename()
+        new_settings.to_file(settings_filename)
+        return new_settings
+
+    def set_settings_interactive(self) -> Settings:
+        settings_filename = self.get_settings_filename()
+        smtp_username = input("SMTP username (your webmail username, usually")
+        smtp_password = input("SMTP app password (for gmail, see https://support.google.com/accounts/answer/185833")
+        smtp_dest_email = input("Destination email. Can be same or different from SMTP username.")
+        smtp_url = input("SMTP url [smtp.gmail.com]")
+        smtp_port = input("SMTP port [587]")
+        new_settings = Settings(smtp_username=smtp_username,
+                                smtp_password=smtp_password,
+                                smtp_dest_email=smtp_dest_email,
+                                smtp_url=smtp_url,
+                                smtp_port=int(smtp_port))
+        new_settings.to_file(settings_filename)
+        return new_settings
 
     def create_if_not_exists(self):
         if not os.path.exists(self.dirname):
             os.makedirs(self.dirname)
+
+@dataclasses.dataclass
+class Settings(object):
+    smtp_username: str
+    smtp_password: str
+    smtp_dest_email: str
+    smtp_url: str = "smtp.gmail.com"
+    smtp_port: int = 587
+
+    def to_file(self, settings_filename: str) -> None:
+        with open(settings_filename, "w") as settings_file:
+            json.dump(dataclasses.asdict(self), settings_file)
+
+    @staticmethod
+    def from_file(settings_filename: str) -> Settings:
+        with open(settings_filename, "r") as settings_file:
+            json_res: Dict[str, Any] = json.load(settings_file)
+            return Settings(**json_res)
+
 
 @dataclasses.dataclass
 class Person(object):
@@ -204,27 +264,16 @@ def recs_to_message(res: Optional[List[Person]], next_day: datetime.date) -> str
             [peep.name for peep in res]
         )
 
-def send_message(contents: str) -> None:
-    today: datetime.date = datetime.datetime.now().date()
-    #################
-    #################
-    ################# i think this justifies now a settings.json file
-    #################
-    #################
-    smtp_url: str = os.getenv("DIO_SMTP_URL", "smtp.gmail.com")
-    smtp_port: int = int(os.getenv("DIO_SMTP_PORT", "587"))
-    smtp_username: str = os.environ["DIO_SMTP_USERNAME"]
-    smtp_password: str = os.environ["DIO_SMTP_PASSWORD"]
-    smtp_dest_email: str = os.environ["DIO_DEST_EMAIL"]
+def send_message(contents: str, date: datetime.date, settings: Settings) -> None:
     msg_obj: email.message.EmailMessage = email.message.EmailMessage()
-    msg_obj['From'] = smtp_username
-    msg_obj['To'] = smtp_dest_email
-    msg_obj['Subject'] = "Diogenes | {}".format(str(today))
+    msg_obj['From'] = settings.smtp_username
+    msg_obj['To'] = settings.smtp_dest_email
+    msg_obj['Subject'] = "Diogenes | {}".format(str(date))
     msg_obj.set_content(contents)
-    with smtplib.SMTP(smtp_url, smtp_port) as server:
+    with smtplib.SMTP(settings.smtp_url, settings.smtp_port) as server:
         server.ehlo()
         server.starttls()
-        server.login(smtp_username, smtp_password)
+        server.login(settings.smtp_username, settings.smtp_password)
         server.send_message(msg_obj)
 
 def main_recs(send:bool=True) -> None:
@@ -236,7 +285,9 @@ def main_recs(send:bool=True) -> None:
     next_day: datetime.date = sched.next_emailing_day(today)
     message: str = recs_to_message(res, next_day)
     if send:
-        send_message(message)
+        settings: Optional[Settings] = dio_dir.get_settings()
+        assert settings is not None, "Have to set settings"
+        send_message(message, today, settings)
     else:
         print(message)
 
