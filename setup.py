@@ -1,8 +1,18 @@
-import os
+from setuptools import setup
 
-### should be installable by pip
-
-# https://superuser.com/questions/391246/multiple-crontabs-for-one-user
-
-if __name__ == "__main__":
-    pass
+setup(
+        name="diogenes8",
+        version="1.0.0",
+        py_modules=["dio", "diocli"],
+        install_requires=[
+            "pyfakefs",
+            "pytest",
+            "hypothesis",
+            "click",
+            "python-crontab",
+        ],
+        entry_points = """
+        [console_scripts]
+        dio=diocli:cli
+        """,
+        )
