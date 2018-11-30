@@ -2,4 +2,4 @@ pyfakefs
 pytest
 hypothesis
 apscheduler
-invoke
+click
