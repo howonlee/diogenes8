@@ -8,7 +8,7 @@ import email
 import smtplib
 import argparse
 import datetime
-import invoke
+import click
 from dio import *
 from typing import Optional, Any, Dict, List
 
@@ -26,15 +26,32 @@ def main_recs(send:bool=True) -> None:
     else:
         print(message)
 
-@invoke.task
-def add(ctx):
-    sys.stdout.writeline("what")
-    print("adding")
+@click.group()
+def cli():
+    pass
 
-@invoke.task
-def batchadd(ctx):
-    sys.stdout.writeline("what2")
-    print("batchadding")
+@cli.command()
+def add():
+    print("what?")
+
+@cli.command()
+def batchadd():
+    print("what?")
+
+@cli.command()
+def dryrecs():
+    print("what?")
+
+@cli.command()
+def recs():
+    print("what?")
+
+@cli.command()
+def setup():
+    print("what?")
+
+if __name__ == "__main__":
+    cli()
 
 # if __name__ == "__main__":
 #     parser = argparse.ArgumentParser()
