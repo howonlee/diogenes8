@@ -16,6 +16,8 @@ To enable email sending in recommendations, you also have to run
 
 `dio setupemail`
 
+And enter the information.
+
 To setup the cronjob, do
 
 `dio setupcron`
@@ -26,6 +28,7 @@ On first usage, creates a `~/.diogenes` directory in home dir. Only a few subcom
 
 Here are the subcommands.
 
+```
 dio add <name>
 ```
 
