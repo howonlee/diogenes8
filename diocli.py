@@ -8,6 +8,7 @@ import email
 import smtplib
 import argparse
 import datetime
+import crontab
 import click
 from dio import *
 from typing import Optional, Any, Dict, List
@@ -17,22 +18,26 @@ def cli():
     pass
 
 @cli.command()
-def add(): ##########
+@click.argument("name", required=True)
+def add(name):
     dio_dir = DioDir()
-    new_peep = Person(name=args.name)
+    new_peep = Person(name=name)
     new_peep.save(dio_dir)
+    click.echo("New person with name {} added".format(name))
 
 @cli.command()
-def batchadd(): ##########
+@click.argument("batch_file_name", required=True)
+def batchadd(batch_file_name):
+    click.echo("Processing batch file...")
     dio_dir = DioDir()
-    with open(args.batchfile, "r") as batch_file:
+    with open(batch_file_name, "r") as batch_file:
         reader = csv.DictReader(batch_file, fieldnames=["name"])
         for row in reader:
             # if you don't do this they all have the same salt
             new_rand = str(random.randint(int(1e30), int(9e30)))
             new_peep = Person(name=row["name"], salt=new_rand)
             new_peep.save(dio_dir)
-    print("what?")
+    click.echo("Finished processing batch file...")
 
 @cli.command()
 def dryrecs():
@@ -59,8 +64,16 @@ def recs():
     click.echo("Recommendations emailed!")
 
 @cli.command()
-def setup(): ##########
-    print("what?")
+def setup():
+    dio_dir = DioDir()
+    dio_dir.set_settings_interactive()
+    curr_cron = crontab.CronTab(user=True)
+    if len(curr_cron.find_comment("diogenes8")) > 0:
+        pass # do nothing
+    else:
+        job = curr_cron.new(command="dio recs" comment="diogenes8")
+        job.hour.on(15)
+        curr_cron.write_to_user(user=True)
 
 if __name__ == "__main__":
     cli()
