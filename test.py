@@ -39,7 +39,6 @@ def test_person_init(peep):
 
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
 def test_person_file_encode_involution(fs, peep, dio_dir):
-    dio_dir.create_if_not_exists()
     peep.save(dio_dir)
     dirname = peep.get_dir(dio_dir)
     filename = dio.Person.get_filename(dirname)
@@ -48,7 +47,6 @@ def test_person_file_encode_involution(fs, peep, dio_dir):
 
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
 def test_person_folder_encode_involution(fs, peep, dio_dir):
-    dio_dir.create_if_not_exists()
     peep.save(dio_dir)
     dirname = peep.get_dir(dio_dir)
     new_peep = dio.Person.from_dir(dirname)
@@ -56,7 +54,6 @@ def test_person_folder_encode_involution(fs, peep, dio_dir):
 
 @hp.given(settings=settings_st(), dio_dir=dio_dir_st())
 def test_settings_encode_involution(fs, settings, dio_dir):
-    dio_dir.create_if_not_exists()
     settings.to_file(dio_dir.get_settings_filename())
     new_settings = dio.Settings.from_file(dio_dir.get_settings_filename())
     assert settings == new_settings
@@ -68,13 +65,6 @@ def test_get_all_idempotence(fs, peep, dio_dir):
     snd_res = dio.Person.get_all(dio_dir)
     assert len(fst_res) > 0
     assert fst_res == snd_res
-
-@hp.given(dio_dir=dio_dir_st())
-def test_dio_dir_creation_idempotence(fs, dio_dir):
-    dio_dir.create_if_not_exists()
-    assert os.path.exists(dio_dir.dirname)
-    dio_dir.create_if_not_exists()
-    assert os.path.exists(dio_dir.dirname)
 
 @hp.given(sched=sched_st(), date=st.dates())
 def test_schedule_should_email_day_idempotence(sched, date):
@@ -137,7 +127,6 @@ def test_schedule_should_not_have_days_with_huge_boluses(fs, peeps, dio_dir, sch
 
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
 def test_add_person_idempotence(fs, peep, dio_dir):
-    dio_dir.create_if_not_exists()
     peep.save(dio_dir)
     peep.save(dio_dir)
     dirname = peep.get_dir(dio_dir)
@@ -146,7 +135,6 @@ def test_add_person_idempotence(fs, peep, dio_dir):
 
 @hp.given(peep=person_st(), dio_dir=dio_dir_st())
 def test_remove_person_non_idempotence(fs, peep, dio_dir):
-    dio_dir.create_if_not_exists()
     peep.save(dio_dir)
     peep.delete(dio_dir)
     with pytest.raises(Exception) as exc:

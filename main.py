@@ -11,7 +11,6 @@ from typing import Optional, Any, Dict, List
 
 def main_recs(send:bool=True) -> None:
     dio_dir: DioDir = DioDir()
-    dio_dir.create_if_not_exists()
     sched: ScheduleABC = DefaultSchedule()
     today: datetime.date = datetime.datetime.now().date()
     res: Optional[List[Person]] = get_recs(dio_dir, sched, today)
@@ -34,7 +33,6 @@ if __name__ == "__main__":
         if not args.name:
             raise IOError("Needs a name")
         dio_dir = DioDir()
-        dio_dir.create_if_not_exists()
         new_peep = Person(name=args.name)
         new_peep.save(dio_dir)
     elif args.subcommand == "batchadd":
@@ -43,7 +41,6 @@ if __name__ == "__main__":
         if not args.batchfile.endswith("csv"):
             raise IOError("Needs a csv file")
         dio_dir = DioDir()
-        dio_dir.create_if_not_exists()
         with open(args.batchfile, "r") as batch_file:
             reader = csv.DictReader(batch_file, fieldnames=["name"])
             for row in reader:
@@ -57,9 +54,9 @@ if __name__ == "__main__":
     elif args.subcommand == "recs":
         print("Recommendations for today sent by email.")
         main_recs(send=True)
-    elif args.subcommand == "setup":
+    elif args.subcommand == "cronsetup":
+        raise NotImplemented("should also setup a cronjob..")
         dio_dir = DioDir()
-        dio_dir.create_if_not_exists()
         dio_dir.set_settings_interactive()
     else:
         raise NotImplementedError("Invalid command")

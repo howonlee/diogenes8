@@ -58,7 +58,6 @@ class Person(object):
 
     @staticmethod
     def get_all(dio_dir: DioDir):
-        dio_dir.create_if_not_exists()
         res = []
         for dirpath, _, filenames in os.walk(dio_dir.dirname):
             if "peep_" in dirpath and "peep.json" in filenames:

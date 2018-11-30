@@ -8,12 +8,15 @@ class DioDir(object):
     """
     Object corresponding to diogenes directory
     Note the default
+    Also note that it created dir if not exists
     """
     def __init__(self, dirname: str=None) -> None:
         if not dirname:
             self.dirname = os.path.expanduser("~/.diogenes")
         else:
             self.dirname = str(dirname)
+        if not os.path.exists(self.dirname):
+            os.makedirs(self.dirname)
 
     def get_settings_filename(self) -> str:
         filename = "{}_settings.json".format(getpass.getuser())
@@ -66,7 +69,3 @@ class DioDir(object):
         new_settings.to_file(settings_filename)
         self.append_to_gitignore(settings_filename)
         return new_settings
-
-    def create_if_not_exists(self):
-        if not os.path.exists(self.dirname):
-            os.makedirs(self.dirname)
