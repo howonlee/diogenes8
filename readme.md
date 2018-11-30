@@ -30,7 +30,7 @@ Here are the subcommands.
 
 `dio add <name>`
 
-Adds a new person to diogenes. Addition is silently not strictly idempotent, because it replaces the person in the hash, I'm vacillating on whether that's good behavior.
+Adds a new person to diogenes. Name has to be one word, so I do `snake_caps`. Addition is silently not strictly idempotent, because it replaces the person in the hash, I'm vacillating on whether that's good behavior.
 
 `dio batchadd <file name>`
 
