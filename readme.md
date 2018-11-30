@@ -58,7 +58,7 @@ Importing friends
 
 I seriously recommend using pen and paper and taking an afternoon to go over your contacts list, because at this point 4/5 your "friends" on Facebook are probably not actually going to be friends to a degree that you will actually be able to contact them. It was for me, a half-decade ago, so I suspect it got worse for folks.
 
-Synchronization and Backup
+Synchronization, Collaboration, and Backup
 ---
 
 Why not just use git on the .diogenes folder? It's actually just all text all the time there.

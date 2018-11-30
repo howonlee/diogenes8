@@ -28,6 +28,8 @@ class DioDir(object):
         else:
             self.dirname = str(dirname)
 
+    ############ settings.json per diodir
+
     def create_if_not_exists(self):
         if not os.path.exists(self.dirname):
             os.makedirs(self.dirname)
@@ -204,6 +206,11 @@ def recs_to_message(res: Optional[List[Person]], next_day: datetime.date) -> str
 
 def send_message(contents: str) -> None:
     today: datetime.date = datetime.datetime.now().date()
+    #################
+    #################
+    ################# i think this justifies now a settings.json file
+    #################
+    #################
     smtp_url: str = os.getenv("DIO_SMTP_URL", "smtp.gmail.com")
     smtp_port: int = int(os.getenv("DIO_SMTP_PORT", "587"))
     smtp_username: str = os.environ["DIO_SMTP_USERNAME"]
@@ -260,8 +267,11 @@ if __name__ == "__main__":
                 new_rand = str(random.randint(int(1e30), int(9e30)))
                 new_peep = Person(name=row["name"], salt=new_rand)
                 new_peep.save(dio_dir)
-    elif args.subcommand == "recs":
-        print("Recommendations for today. There is also a recs daemon.")
+    elif args.subcommand == "dryrecs":
+        print("Recommendations for today, no email.")
         main_recs(send=False)
+    elif args.subcommand == "recs":
+        print("Recommendations for today sent by email.")
+        main_recs(send=True)
     else:
         raise NotImplementedError("Invalid command")
