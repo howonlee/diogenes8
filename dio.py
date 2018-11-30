@@ -324,5 +324,9 @@ if __name__ == "__main__":
     elif args.subcommand == "recs":
         print("Recommendations for today sent by email.")
         main_recs(send=True)
+    elif args.subcommand == "setup":
+        dio_dir = DioDir()
+        dio_dir.create_if_not_exists()
+        dio_dir.set_settings_interactive()
     else:
         raise NotImplementedError("Invalid command")
