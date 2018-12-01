@@ -57,7 +57,7 @@ sudo sh -c 'echo "#!/bin/bash -e
 > sudo -H -u <your username> dio recs" >> /home/<your username>/.diogenes/diogenes.log 2>&1'
 ```
 
-There's no anacron in OSX, you're supposed to use launchd. I have no idea how to use launchd.
+There's no anacron in OSX, you're supposed to use launchd for analogous functionality. I have no idea how to use launchd, so my recommendation is just use the vixiecron that comes with OSX.
 
 Importing friends
 ---
