@@ -50,7 +50,7 @@ Sets up the email settings for emailing. This just assumes an SMTP server alread
 
 `dio setupcron`
 
-Sets up the cronjob for automatic emailing.
+Sets up the cronjob for automatic emailing. Uses the default vixiecron on ubuntu only: I don't know a way to do anacron without asking for root, and at that point you might as just manually setup cron.
 
 Importing friends
 ---
