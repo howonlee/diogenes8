@@ -50,11 +50,11 @@ Sets up the email settings for emailing. This just assumes an SMTP server alread
 
 `dio setupcron`
 
-Sets up the cronjob for automatic emailing. Uses the default vixiecron on ubuntu only: I don't know a way to do anacron without asking for root, and at that point you might as just manually setup cron by running:
+Sets up the cronjob for automatic emailing. Uses the default vixiecron on ubuntu only: I don't know a way to do anacron without asking for root, and at that point you might as just manually setup cron by running something like:
 
 ```
-sudo sh -c 'echo "#!/bin/sh
-> sudo -u <your username> dio recs" > /etc/cron.daily/diogenes'
+sudo sh -c 'echo "#!/bin/bash -e
+> sudo -H -u <your username> dio recs" >> /home/<your username>/.diogenes/diogenes.log 2>&1'
 ```
 
 There's no anacron in OSX, you're supposed to use launchd. I have no idea how to use launchd.
