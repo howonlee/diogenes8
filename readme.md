@@ -84,6 +84,11 @@ Why's it called Diogenes?
 
 The most antisocial way to be social should be named after the most antisocial of the ancients.
 
+Slack
+---
+
+I made a slack at diogenes8.slack.com. Email me if you want in.
+
 Notes
 ---
 
