@@ -1,7 +1,7 @@
 Diogenes Mark 8
 ===
 
-Diogenes is an intensely personalized scheduler for reminding you to talk to your friends. Personalized only to me, Howon Lee. Literally down to using my favorite way to refer to peeps in the plural, `peeps`.
+Diogenes is an intensely personalized scheduler for reminding you to talk to your friends. Personalized only to me, Howon Lee. Literally down to using my favorite way to refer to peeps in the plural, `peeps`. You can use it if you want, tho.
 
 There are of course other folks who did analogous things, almost without exception more user-friendly (for example, [Monica](https://www.monicahq.com/)) but I wanted this specific thing.
 
