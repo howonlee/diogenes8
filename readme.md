@@ -22,6 +22,8 @@ To setup the cronjob, do
 
 `dio setupcron`
 
+This will set it up in vixie cron, which seems to be the proper one in Ubuntu and OSX, I don't know about other distros.
+
 Usage
 ---
 On first usage, creates a `~/.diogenes` directory in home dir. Only a few subcommands right now. The person data only goes into a little `peep.json` file inside of a folder in `~/.diogenes` corresponding to the person. So if you need to do actual CRM things and take notes or something, there's a ... folder. Just shove it in there. Any files you'd like.
@@ -38,7 +40,7 @@ Adds peeps batchwise. --batchfile takes a csv with fields `name` _only_.
 
 `dio recs`
 
-Manually email destination email the recommendations for today.
+Manually email the destination email which you previously set in `dio setupemail` the recommendations for today.
 
 `dio dryrecs`
 
